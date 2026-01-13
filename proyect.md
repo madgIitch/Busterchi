@@ -192,6 +192,7 @@ public/
 **Sprint 3 (1 semana) - Pulido y PWA**
 - Micro-interacciones (bounce, sparkle)
 - Animaciones idle basicas
+- Barras pixelart: usar `bar_empty.png` + `bar_fill.png` con wrapper `overflow-hidden` y `image-rendering: pixelated` para animar el ancho del fill
 - QA en iOS (Add to Home Screen)
 
 ---
