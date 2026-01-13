@@ -155,18 +155,15 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-screen bg-background px-6 py-12 text-text">
-      <main className="mx-auto flex w-full max-w-md flex-col gap-6">
+    <div className="min-h-svh bg-background px-4 py-6 text-text sm:px-6 sm:py-10">
+      <main className="mx-auto flex w-full max-w-md flex-col gap-5 sm:gap-6">
         <header className="flex items-center justify-between">
           <div>
-            <p className="text-xs uppercase tracking-[0.3em] text-muted">
-              PWA
-            </p>
-            <h1 className="text-2xl font-normal">Busterchi</h1>
+            <h1 className="text-xl font-normal sm:text-2xl">Busterchi</h1>
           </div>
           <button
             type="button"
-            className="h-10 w-10 rounded-full bg-surface text-text shadow-sm shadow-black/10"
+            className="h-9 w-9 rounded-full bg-surface text-text shadow-sm shadow-black/10 sm:h-10 sm:w-10"
           >
             ⚙
           </button>
@@ -174,7 +171,7 @@ export default function Home() {
 
         <PetScene isSleeping={isSleepingNow} />
         <StatsBars stats={stats} />
-        <section className="w-full rounded-3xl bg-surface p-4 shadow-sm shadow-black/10">
+        <section className="w-full rounded-3xl bg-surface p-3 shadow-sm shadow-black/10 sm:p-4">
           <ActionButtons actions={actions} />
         </section>
         <SpeechBubble line={lastSpeechLine} />

@@ -17,7 +17,7 @@ export default function ActionButtons({ actions }: { actions: ActionItem[] }) {
             type="button"
             disabled={action.disabled}
             onClick={action.onClick}
-            className="flex w-full items-center justify-center rounded-3xl shadow-lg shadow-black/15 transition-opacity disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex w-full items-center justify-center rounded-3xl shadow-lg shadow-black/15 transition-opacity transition-transform active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <Image
               src={action.imageSrc}
