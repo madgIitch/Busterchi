@@ -25,13 +25,22 @@
   --color-accent: var(--color-accent);
   --color-text: var(--color-text);
   --color-muted: var(--color-muted);
-  --font-sans: var(--font-baloo);
-  --font-mono: var(--font-geist-mono);
+  --font-sans: var(--font-hachi);
 }
 
 body {
   background: var(--color-background);
   color: var(--color-text);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
   overflow: hidden;
+}
+
+html {
+  font-family: var(--font-sans);
+}
+
+.hachi-maru-pop-regular {
+  font-family: "Hachi Maru Pop", cursive;
+  font-weight: 400;
+  font-style: normal;
 }

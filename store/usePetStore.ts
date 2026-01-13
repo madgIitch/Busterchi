@@ -4,6 +4,7 @@ import {
   ActionKey,
   getSpeechForAction,
   getSpeechForNeeds,
+  getSpeechForSleep,
   SPEECH_LINES,
 } from "@/lib/speech";
 import {
@@ -160,6 +161,9 @@ export const usePetStore = create<PetStore>((set) => ({
         ...state,
         ...decayed,
         cooldowns: { ...defaultCooldowns, ...(stored?.cooldowns ?? {}) },
+        lastSpeechLine: isSleeping
+          ? getSpeechForSleep()
+          : getSpeechForNeeds(decayed),
         lastUpdated: now,
         lastCheckInDate: stored?.lastCheckInDate ?? null,
         isSleeping,
@@ -170,12 +174,14 @@ export const usePetStore = create<PetStore>((set) => ({
   updateSpeech: () => {
     set((state) => ({
       ...state,
-      lastSpeechLine: getSpeechForNeeds({
-        food: state.food,
-        walk: state.walk,
-        love: state.love,
-        energy: state.energy,
-      }),
+      lastSpeechLine: state.isSleeping
+        ? getSpeechForSleep()
+        : getSpeechForNeeds({
+            food: state.food,
+            walk: state.walk,
+            love: state.love,
+            energy: state.energy,
+          }),
     }));
   },
 }));

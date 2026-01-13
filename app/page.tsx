@@ -162,7 +162,7 @@ export default function Home() {
             <p className="text-xs uppercase tracking-[0.3em] text-muted">
               PWA
             </p>
-            <h1 className="text-2xl font-semibold">Busterchi</h1>
+            <h1 className="text-2xl font-normal">Busterchi</h1>
           </div>
           <button
             type="button"
@@ -172,7 +172,7 @@ export default function Home() {
           </button>
         </header>
 
-        <PetScene />
+        <PetScene isSleeping={isSleepingNow} />
         <StatsBars stats={stats} />
         <section className="w-full rounded-3xl bg-surface p-4 shadow-sm shadow-black/10">
           <ActionButtons actions={actions} />

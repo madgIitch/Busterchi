@@ -1,15 +1,12 @@
 ﻿import type { Metadata } from "next";
-import { Baloo_2, Geist_Mono } from "next/font/google";
+import localFont from "next/font/local";
 import "./globals.css";
 
-const baloo = Baloo_2({
-  variable: "--font-baloo",
-  subsets: ["latin"],
-});
-
-const geistMono = Geist_Mono({
-  variable: "--font-geist-mono",
-  subsets: ["latin"],
+const hachi = localFont({
+  src: "../HachiMaruPop-Regular.ttf",
+  variable: "--font-hachi",
+  weight: "400",
+  display: "swap",
 });
 
 export const metadata: Metadata = {
@@ -39,7 +36,7 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body
-        className={`${baloo.variable} ${geistMono.variable} antialiased`}
+        className={`${hachi.variable} hachi-maru-pop-regular antialiased`}
       >
         {children}
       </body>

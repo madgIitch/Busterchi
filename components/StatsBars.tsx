@@ -15,7 +15,7 @@ export default function StatsBars({ stats }: { stats: StatItem[] }) {
             <span aria-hidden="true">{stat.icon}</span>
           </div>
           <div className="flex-1 space-y-1">
-            <div className="flex items-center justify-between text-sm font-semibold text-[var(--color-text)]">
+            <div className="flex items-center justify-between text-sm font-normal text-[var(--color-text)]">
               <span>{stat.label}</span>
               <span className="text-[var(--color-muted)]">
                 {Math.round(stat.value)}

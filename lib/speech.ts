@@ -97,6 +97,14 @@ export const SPEECH_LINES = {
       "¿Me despiertas en un ratito?",
     ],
   },
+  sleepDreams: [
+    "Sueño con huesitos gigantes.",
+    "Estoy corriendo en una pradera.",
+    "Zzz... mariposas por todas partes.",
+    "Sueño contigo y mi camita.",
+    "Un paseo infinito en mis sueños.",
+    "Zzz... lluvia suave y mantita.",
+  ],
 };
 
 export type ActionKey = "snack" | "walk" | "pet" | "sleep";
@@ -130,4 +138,8 @@ export function getSpeechForNeeds(stats: PetStats) {
     return pickLine(SPEECH_LINES.needs.energy);
   }
   return pickLine(SPEECH_LINES.default);
+}
+
+export function getSpeechForSleep() {
+  return pickLine(SPEECH_LINES.sleepDreams);
 }
