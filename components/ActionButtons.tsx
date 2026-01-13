@@ -10,7 +10,7 @@ type ActionItem = {
 
 export default function ActionButtons({ actions }: { actions: ActionItem[] }) {
   return (
-    <section className="grid w-full grid-cols-3 gap-3">
+    <section className="grid w-full grid-cols-4 gap-3">
       {actions.map((action) => (
         <div key={action.label} className="flex flex-col items-center gap-1">
           <button

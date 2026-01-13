@@ -10,12 +10,12 @@
 }
 
 .dark {
-  --color-background: #2a0000;
-  --color-surface: #5d0000;
-  --color-primary: #ffa9cb;
-  --color-accent: #e05e80;
-  --color-text: #af9da4;
-  --color-muted: #8a8083;
+  --color-background: #10090e;
+  --color-surface: #1f1520;
+  --color-primary: #2b1f2c;
+  --color-accent: #f2b4c5;
+  --color-text: #f3eaf2;
+  --color-muted: #b9a6b3;
 }
 
 @theme inline {
@@ -25,7 +25,7 @@
   --color-accent: var(--color-accent);
   --color-text: var(--color-text);
   --color-muted: var(--color-muted);
-  --font-sans: var(--font-geist-sans);
+  --font-sans: var(--font-baloo);
   --font-mono: var(--font-geist-mono);
 }
 

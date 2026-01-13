@@ -1,26 +1,30 @@
 import { create } from "zustand";
-import { SPEECH_LINES } from "@/lib/speech";
-
-type PetStats = {
-  food: number;
-  walk: number;
-  love: number;
-  energy: number;
-};
-
-type Cooldowns = {
-  snack: number;
-  walk: number;
-  pet: number;
-};
-
-type ActionKey = keyof Cooldowns;
+import { applyDecay, DEFAULT_DECAY_RATES, PetStats } from "@/lib/decay";
+import {
+  ActionKey,
+  getSpeechForAction,
+  getSpeechForNeeds,
+  SPEECH_LINES,
+} from "@/lib/speech";
+import {
+  Cooldowns,
+  PersistedPetState,
+  STORAGE_VERSION,
+  readStorage,
+  writeStorage,
+} from "@/lib/storage";
 
 type PetStore = PetStats & {
   cooldowns: Cooldowns;
   lastSpeechLine: string;
+  lastUpdated: number;
+  lastCheckInDate: string | null;
+  isSleeping: boolean;
+  sleepUntil: number;
   setStat: (key: keyof PetStats, value: number) => void;
   performAction: (action: ActionKey) => void;
+  rehydrate: () => void;
+  updateSpeech: () => void;
 };
 
 const defaultStats: PetStats = {
@@ -34,25 +38,30 @@ const defaultCooldowns: Cooldowns = {
   snack: 0,
   walk: 0,
   pet: 0,
+  sleep: 0,
 };
 
 const COOLDOWN_MS: Record<ActionKey, number> = {
   snack: 2 * 60 * 1000,
   walk: 5 * 60 * 1000,
   pet: 1 * 60 * 1000,
+  sleep: 10 * 60 * 1000,
 };
+const SLEEP_DURATION_MS = 10 * 60 * 1000;
 
 const clampStat = (value: number) => Math.max(0, Math.min(100, value));
 
-const getRandomSpeech = () => {
-  const index = Math.floor(Math.random() * SPEECH_LINES.length);
-  return SPEECH_LINES[index];
-};
+const getTodayKey = () => new Date().toISOString().slice(0, 10);
+const isDev = process.env.NODE_ENV === "development";
 
 export const usePetStore = create<PetStore>((set) => ({
   ...defaultStats,
   cooldowns: defaultCooldowns,
-  lastSpeechLine: SPEECH_LINES[0],
+  lastSpeechLine: SPEECH_LINES.default[0],
+  lastUpdated: 0,
+  lastCheckInDate: null,
+  isSleeping: false,
+  sleepUntil: 0,
   setStat: (key, value) =>
     set((state) => ({
       ...state,
@@ -61,6 +70,13 @@ export const usePetStore = create<PetStore>((set) => ({
   performAction: (action) => {
     set((state) => {
       const now = Date.now();
+      const sleepCooldownActive =
+        state.cooldowns.sleep &&
+        now - state.cooldowns.sleep < SLEEP_DURATION_MS;
+      const sleepingNow = state.sleepUntil > now || sleepCooldownActive;
+      if (sleepingNow && action !== "sleep") {
+        return state;
+      }
       const lastUsed = state.cooldowns[action];
       const remaining = lastUsed
         ? COOLDOWN_MS[action] - (now - lastUsed)
@@ -71,6 +87,8 @@ export const usePetStore = create<PetStore>((set) => ({
       }
 
       const nextStats: PetStats = { ...state };
+      let nextSleepUntil = state.sleepUntil;
+      let nextIsSleeping = sleepingNow;
 
       if (action === "snack") {
         nextStats.food = clampStat(state.food + 15);
@@ -86,6 +104,11 @@ export const usePetStore = create<PetStore>((set) => ({
         nextStats.love = clampStat(state.love + 18);
         nextStats.energy = clampStat(state.energy - 2);
       }
+      if (action === "sleep") {
+        nextStats.energy = clampStat(state.energy + 35);
+        nextSleepUntil = now + SLEEP_DURATION_MS;
+        nextIsSleeping = true;
+      }
 
       return {
         ...state,
@@ -94,8 +117,85 @@ export const usePetStore = create<PetStore>((set) => ({
           ...state.cooldowns,
           [action]: now,
         },
-        lastSpeechLine: getRandomSpeech(),
+        lastSpeechLine: getSpeechForAction(action),
+        lastUpdated: now,
+        lastCheckInDate: getTodayKey(),
+        isSleeping: nextIsSleeping,
+        sleepUntil: nextSleepUntil,
       };
     });
   },
+  rehydrate: () => {
+    set((state) => {
+      const now = Date.now();
+      const stored = readStorage();
+      const lastUpdatedBase =
+        stored?.lastUpdated ?? (state.lastUpdated || now);
+      const baseSleepUntil = stored?.sleepUntil ?? state.sleepUntil;
+      const isSleeping = baseSleepUntil > now;
+      const sleepUntil = isSleeping ? baseSleepUntil : 0;
+
+      const baseStats = stored?.stats ?? {
+        food: state.food,
+        walk: state.walk,
+        love: state.love,
+        energy: state.energy,
+      };
+
+      const decayed = applyDecay(
+        baseStats,
+        (now - lastUpdatedBase) / 60000,
+        DEFAULT_DECAY_RATES,
+      );
+
+      if (isDev) {
+        console.log("[decay]", {
+          minutes: (now - lastUpdatedBase) / 60000,
+          before: baseStats,
+          after: decayed,
+        });
+      }
+
+      return {
+        ...state,
+        ...decayed,
+        cooldowns: { ...defaultCooldowns, ...(stored?.cooldowns ?? {}) },
+        lastUpdated: now,
+        lastCheckInDate: stored?.lastCheckInDate ?? null,
+        isSleeping,
+        sleepUntil,
+      };
+    });
+  },
+  updateSpeech: () => {
+    set((state) => ({
+      ...state,
+      lastSpeechLine: getSpeechForNeeds({
+        food: state.food,
+        walk: state.walk,
+        love: state.love,
+        energy: state.energy,
+      }),
+    }));
+  },
 }));
+
+if (typeof window !== "undefined") {
+  usePetStore.subscribe((state) => {
+    const payload: PersistedPetState = {
+      version: STORAGE_VERSION,
+      stats: {
+        food: state.food,
+        walk: state.walk,
+        love: state.love,
+        energy: state.energy,
+      },
+      cooldowns: state.cooldowns,
+      lastSpeechLine: state.lastSpeechLine,
+      lastUpdated: state.lastUpdated,
+      lastCheckInDate: state.lastCheckInDate,
+      sleepUntil: state.sleepUntil,
+    };
+    writeStorage(payload);
+  });
+}
