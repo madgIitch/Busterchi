@@ -1,6 +1,7 @@
 ﻿import type { Metadata } from "next";
 import localFont from "next/font/local";
 import "./globals.css";
+import ServiceWorker from "@/components/ServiceWorker";
 
 const hachi = localFont({
   src: "../HachiMaruPop-Regular.ttf",
@@ -42,6 +43,7 @@ export default function RootLayout({
         className={`${hachi.variable} hachi-maru-pop-regular antialiased`}
       >
         {children}
+        <ServiceWorker />
       </body>
     </html>
   );
