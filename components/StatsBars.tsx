@@ -6,7 +6,8 @@ type StatItem = {
   label: string;
   value: number;
   icon: string;
-  barGradient: string;
+  barEmptySrc: string;
+  barFullSrc: string;
   endIcon?: string;
 };
 
@@ -33,29 +34,24 @@ function StatRow({ stat }: { stat: StatItem }) {
           <span>{stat.label}</span>
           <span className="text-muted">{Math.round(stat.value)}</span>
         </div>
-        <div className="relative h-4 w-full overflow-hidden rounded-full bg-background/80 shadow-inner">
+        <div className="relative h-6 w-full overflow-hidden rounded-full bg-background/80 shadow-inner">
           <div
-            className="pixelated h-full w-full"
+            className="pixelated absolute left-0 top-0 h-full w-full"
             style={{
-              backgroundImage: "url(/uiElements/bar_empty.png)",
-              backgroundSize: "contain",
-              backgroundRepeat: "repeat-x",
+              backgroundImage: `url(${stat.barFullSrc})`,
+              backgroundSize: "100% 100%",
+              backgroundRepeat: "no-repeat",
+              clipPath: `inset(0 ${100 - Math.round(stat.value)}% 0 0)`,
             }}
           />
           <div
-            className="pixelated absolute left-0 top-0 h-full overflow-hidden"
-            style={{ width: `${Math.round(stat.value)}%` }}
-          >
-            <div
-              className="h-full w-full"
-              style={{
-                backgroundImage:
-                  "url(/uiElements/bar_fill.png), " + stat.barGradient,
-                backgroundSize: "contain",
-                backgroundRepeat: "repeat-x",
-              }}
-            />
-          </div>
+            className="pixelated h-full w-full"
+            style={{
+              backgroundImage: `url(${stat.barEmptySrc})`,
+              backgroundSize: "100% 100%",
+              backgroundRepeat: "no-repeat",
+            }}
+          />
           {sparkle ? (
             <span className="sparkle" aria-hidden="true" />
           ) : null}

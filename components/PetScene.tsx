@@ -5,7 +5,7 @@ export default function PetScene({ isSleeping }: { isSleeping: boolean }) {
   const altText = isSleeping ? "Buster sleeping" : "Buster idle";
 
   return (
-    <section className="w-full rounded-3xl bg-surface p-6 shadow-lg shadow-black/10">
+    <section className="w-full rounded-3xl bg-surface p-4 shadow-lg shadow-black/10 sm:p-6">
       <div className="relative w-full aspect-[3/2] overflow-hidden rounded-2xl bg-background/60">
         <Image
           src="/scenes/housePlaceholder.png"
@@ -21,7 +21,7 @@ export default function PetScene({ isSleeping }: { isSleeping: boolean }) {
           width={110}
           height={90}
           priority
-          className="absolute left-[60%] top-[80%] -translate-x-1/2 -translate-y-1/2 idle-float"
+          className="absolute left-[60%] top-[80%] h-auto w-[clamp(90px,28vw,130px)] -translate-x-1/2 -translate-y-1/2 idle-float"
         />
       </div>
     </section>

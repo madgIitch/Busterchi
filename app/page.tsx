@@ -77,25 +77,29 @@ export default function Home() {
       label: "Food",
       value: food,
       icon: "🦴",
-      barGradient: "linear-gradient(90deg, #ffd27c 0%, #ffb14d 100%)",
+      barEmptySrc: "/uiElements/ProgressEmptyFood.png",
+      barFullSrc: "/uiElements/ProgressFullFood.png",
     },
     {
       label: "Walk",
       value: walk,
       icon: "🐾",
-      barGradient: "linear-gradient(90deg, #8fd0ff 0%, #5aa9f0 100%)",
+      barEmptySrc: "/uiElements/ProgressEmptyWalk.png",
+      barFullSrc: "/uiElements/ProgressFullWalk.png",
     },
     {
       label: "Love",
       value: love,
       icon: "❤",
-      barGradient: "linear-gradient(90deg, #ff9db7 0%, #f46f8d 100%)",
+      barEmptySrc: "/uiElements/ProgressEmptyLove.png",
+      barFullSrc: "/uiElements/ProgressFullLove.png",
     },
     {
       label: "Energy",
       value: energy,
       icon: "🌙",
-      barGradient: "linear-gradient(90deg, #b4e58f 0%, #8bc56b 100%)",
+      barEmptySrc: "/uiElements/ProgressEmptyEnergy.png",
+      barFullSrc: "/uiElements/ProgressFullEnergy.png",
     },
   ];
 
@@ -145,6 +149,7 @@ export default function Home() {
     {
       label: "Sleep",
       imageSrc: "/uiElements/Sleep.png",
+      imageClassName: "h-[168px]",
       disabled: isSleepingNow || getRemaining("sleep") > 0,
       cooldownLabel:
         getRemaining("sleep") > 0
@@ -155,15 +160,15 @@ export default function Home() {
   ];
 
   return (
-    <div className="min-h-svh bg-background px-4 py-6 text-text sm:px-6 sm:py-10">
-      <main className="mx-auto flex w-full max-w-md flex-col gap-5 sm:gap-6">
+    <div className="h-[100svh] bg-background px-3 py-3 text-text sm:px-6 sm:py-6">
+      <main className="fit-screen mx-auto flex h-full w-full max-w-md flex-col justify-between gap-2 sm:gap-4">
         <header className="flex items-center justify-between">
           <div>
-            <h1 className="text-xl font-normal sm:text-2xl">Busterchi</h1>
+            <h1 className="text-base font-normal sm:text-2xl">Busterchi</h1>
           </div>
           <button
             type="button"
-            className="h-9 w-9 rounded-full bg-surface text-text shadow-sm shadow-black/10 sm:h-10 sm:w-10"
+            className="h-8 w-8 rounded-full bg-surface text-text shadow-sm shadow-black/10 sm:h-10 sm:w-10"
           >
             ⚙
           </button>
@@ -171,7 +176,7 @@ export default function Home() {
 
         <PetScene isSleeping={isSleepingNow} />
         <StatsBars stats={stats} />
-        <section className="w-full rounded-3xl bg-surface p-3 shadow-sm shadow-black/10 sm:p-4">
+        <section className="w-full rounded-3xl bg-surface p-2 shadow-sm shadow-black/10 sm:p-4">
           <ActionButtons actions={actions} />
         </section>
         <SpeechBubble line={lastSpeechLine} />

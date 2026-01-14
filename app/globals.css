@@ -32,19 +32,34 @@ body {
   background: var(--color-background);
   color: var(--color-text);
   font-family: var(--font-sans);
-  overflow-y: auto;
-  -webkit-overflow-scrolling: touch;
+  overflow: hidden;
 }
 
 html {
   font-family: var(--font-sans);
-  overflow-y: auto;
+  overflow: hidden;
 }
 
 .hachi-maru-pop-regular {
   font-family: "Hachi Maru Pop", cursive;
   font-weight: 400;
   font-style: normal;
+}
+
+.fit-screen {
+  transform-origin: top center;
+}
+
+@media (max-height: 700px) {
+  .fit-screen {
+    transform: scale(0.92);
+  }
+}
+
+@media (max-height: 640px) {
+  .fit-screen {
+    transform: scale(0.86);
+  }
 }
 
 .pixelated {
