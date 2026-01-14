@@ -46,7 +46,7 @@ const defaultCooldowns: Cooldowns = {
 
 const COOLDOWN_MS: Record<ActionKey, number> = {
   snack: 2 * 60 * 1000,
-  walk: 5 * 60 * 1000,
+  walk: 30 * 1000,
   pet: 1 * 60 * 1000,
   sleep: 10 * 60 * 1000,
 };
@@ -143,8 +143,8 @@ export const usePetStore = create<PetStore>((set) => ({
       const lastUpdatedBase =
         stored?.lastUpdated ?? (state.lastUpdated || now);
       const baseSleepUntil = stored?.sleepUntil ?? state.sleepUntil;
-      const isSleeping = baseSleepUntil > now;
-      const sleepUntil = isSleeping ? baseSleepUntil : 0;
+      const isSleeping = isDev ? false : baseSleepUntil > now;
+      const sleepUntil = isDev ? 0 : isSleeping ? baseSleepUntil : 0;
 
       const baseStats = stored?.stats ?? {
         food: state.food,

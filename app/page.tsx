@@ -8,6 +8,7 @@ import PetScene from "@/components/PetScene";
 import ShopModal from "@/components/ShopModal";
 import SpeechBubble from "@/components/SpeechBubble";
 import StatsBars from "@/components/StatsBars";
+import WalkGameModal from "@/components/WalkGameModal";
 import { usePetStore } from "@/store/usePetStore";
 import { useShopStore } from "@/store/useShopStore";
 
@@ -28,6 +29,7 @@ export default function Home() {
   } = usePetStore();
   const { openShop, openInventory, rehydrate: rehydrateShop } = useShopStore();
   const [now, setNow] = useState(0);
+  const [isWalkGameOpen, setIsWalkGameOpen] = useState(false);
 
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 1000);
@@ -65,7 +67,7 @@ export default function Home() {
   const cooldownMs = useMemo(
     () => ({
       snack: 2 * 60 * 1000,
-      walk: 5 * 60 * 1000,
+      walk: 30 * 1000,
       pet: 1 * 60 * 1000,
       sleep: 10 * 60 * 1000,
     }),
@@ -142,7 +144,10 @@ export default function Home() {
         getRemaining("walk") > 0
           ? `${Math.ceil(getRemaining("walk") / 1000)}s`
           : "",
-      onClick: () => performAction("walk"),
+      onClick: () => {
+        performAction("walk");
+        setIsWalkGameOpen(true);
+      },
     },
     {
       label: "Pet",
@@ -158,7 +163,10 @@ export default function Home() {
       label: "Sleep",
       imageSrc: "/uiElements/Sleep.png",
       imageClassName: "h-[168px]",
-      disabled: isSleepingNow || getRemaining("sleep") > 0,
+      disabled:
+        process.env.NODE_ENV === "development" ||
+        isSleepingNow ||
+        getRemaining("sleep") > 0,
       cooldownLabel:
         getRemaining("sleep") > 0
           ? `${Math.ceil(getRemaining("sleep") / 1000)}s`
@@ -223,6 +231,10 @@ export default function Home() {
         <SpeechBubble line={lastSpeechLine} />
         <InventoryModal />
         <ShopModal />
+        <WalkGameModal
+          isOpen={isWalkGameOpen}
+          onClose={() => setIsWalkGameOpen(false)}
+        />
       </main>
     </div>
   );
