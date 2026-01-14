@@ -1,4 +1,4 @@
-import type { ElementId } from "@/lib/encounters/types";
+import type { ElementId } from "./types";
 
 export const ELEMENTS: Record<
   ElementId,

@@ -3,8 +3,8 @@ import type {
   CardEffect,
   ElementId,
   EnemyDeck,
-} from "@/lib/encounters/types";
-import { ELEMENTS } from "@/lib/encounters/elements";
+} from "./lib/encounters/types";
+import { ELEMENTS } from "./lib/encounters/elements";
 
 export type PlayerState = {
   mood: number;
@@ -246,6 +246,9 @@ function applyEffects(state: CombatState, effects: CardEffect[]) {
           0,
           100,
         );
+        break;
+      case "enemy_hp_flat":
+        state.enemy.hp = clamp(state.enemy.hp - effect.value, 0, 100);
         break;
       case "apply_tag":
       case "note":

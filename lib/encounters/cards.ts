@@ -1,4 +1,4 @@
-import type { CardDefinition } from "@/lib/encounters/types";
+import type { CardDefinition } from "./types";
 
 export const CARD_CATALOG: CardDefinition[] = [
   // IMPULSO
@@ -9,7 +9,9 @@ export const CARD_CATALOG: CardDefinition[] = [
     cost: 2,
     rarity: "common",
     effects: [
+      { type: "enemy_hp_pct", value: 6 },
       { type: "rhythm_add", value: 2 },
+      { type: "stress_add", value: 6 },
       { type: "stress_add", value: 10 },
     ],
   },
@@ -20,6 +22,8 @@ export const CARD_CATALOG: CardDefinition[] = [
     cost: 1,
     rarity: "common",
     effects: [
+      { type: "enemy_hp_flat", value: 6 },
+      { type: "stress_add", value: 6 },
       { type: "stress_reduce", value: 6 },
       { type: "note", text: "Si Estres > 50: +1 Ritmo" },
     ],
@@ -52,7 +56,9 @@ export const CARD_CATALOG: CardDefinition[] = [
     cost: 3,
     rarity: "rare",
     effects: [
+      { type: "enemy_hp_pct", value: 10 },
       { type: "rhythm_add", value: 3 },
+      { type: "stress_add", value: 8 },
       { type: "note", text: "Si recibes dano este turno: dano x1.5" },
     ],
   },
@@ -86,7 +92,11 @@ export const CARD_CATALOG: CardDefinition[] = [
     element: "calma",
     cost: 1,
     rarity: "common",
-    effects: [{ type: "calm_add", value: 1 }],
+    effects: [
+      { type: "enemy_hp_flat", value: 4 },
+      { type: "stress_add", value: 3 },
+      { type: "calm_add", value: 1 },
+    ],
   },
   {
     id: "calma_rutina_conocida",
@@ -94,7 +104,11 @@ export const CARD_CATALOG: CardDefinition[] = [
     element: "calma",
     cost: 1,
     rarity: "common",
-    effects: [{ type: "note", text: "Este turno no generas Estres" }],
+    effects: [
+      { type: "enemy_hp_flat", value: 4 },
+      { type: "stress_add", value: 3 },
+      { type: "note", text: "Este turno no generas Estres" },
+    ],
   },
   {
     id: "calma_respiracion_lenta",
@@ -103,6 +117,8 @@ export const CARD_CATALOG: CardDefinition[] = [
     cost: 2,
     rarity: "rare",
     effects: [
+      { type: "enemy_hp_flat", value: 6 },
+      { type: "stress_add", value: 5 },
       { type: "stress_reduce", value: 12 },
       { type: "confusion_remove", value: 1 },
     ],
@@ -113,7 +129,11 @@ export const CARD_CATALOG: CardDefinition[] = [
     element: "calma",
     cost: 0,
     rarity: "common",
-    effects: [{ type: "repeat_enemy_last" }],
+    effects: [
+      { type: "enemy_hp_flat", value: 4 },
+      { type: "stress_add", value: 3 },
+      { type: "repeat_enemy_last" },
+    ],
   },
   {
     id: "calma_pararse_seco",
@@ -189,7 +209,11 @@ export const CARD_CATALOG: CardDefinition[] = [
     element: "caos",
     cost: 2,
     rarity: "rare",
-    effects: [{ type: "apply_tag", tag: "caos_enemigo" }],
+    effects: [
+      { type: "enemy_hp_pct", value: 8 },
+      { type: "stress_add", value: 6 },
+      { type: "apply_tag", tag: "caos_enemigo" },
+    ],
   },
   {
     id: "caos_interrumpir_todo",
@@ -281,7 +305,11 @@ export const CARD_CATALOG: CardDefinition[] = [
     element: "territorio",
     cost: 1,
     rarity: "common",
-    effects: [{ type: "note", text: "Reduce proximo efecto negativo 50%" }],
+    effects: [
+      { type: "enemy_hp_flat", value: 6 },
+      { type: "stress_add", value: 4 },
+      { type: "note", text: "Reduce proximo efecto negativo 50%" },
+    ],
   },
   {
     id: "territorio_plantarse",
@@ -321,7 +349,11 @@ export const CARD_CATALOG: CardDefinition[] = [
     element: "territorio",
     cost: 3,
     rarity: "epic",
-    effects: [{ type: "note", text: "Reduce HP enemigo segun Ritmo" }],
+    effects: [
+      { type: "enemy_hp_pct", value: 18 },
+      { type: "stress_add", value: 10 },
+      { type: "note", text: "Reduce HP enemigo segun Ritmo" },
+    ],
   },
   {
     id: "territorio_mi_sitio",

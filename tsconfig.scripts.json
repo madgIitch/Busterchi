@@ -1,0 +1,17 @@
+{
+  "extends": "./tsconfig.json",
+  "compilerOptions": {
+    "module": "commonjs",
+    "moduleResolution": "node",
+    "outDir": ".sim",
+    "noEmit": false,
+    "rootDir": ".",
+    "types": ["node"],
+    "skipLibCheck": true
+  },
+  "include": [
+    "scripts/simulate-combat.ts",
+    "combat.ts",
+    "lib/encounters/**/*.ts"
+  ]
+}

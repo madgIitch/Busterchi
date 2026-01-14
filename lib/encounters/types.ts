@@ -21,6 +21,7 @@ export type CardEffect =
   | { type: "damage_reduction_pct"; value: number }
   | { type: "exit_combat" }
   | { type: "enemy_hp_pct"; value: number }
+  | { type: "enemy_hp_flat"; value: number }
   | { type: "apply_tag"; tag: string }
   | { type: "note"; text: string };
 
