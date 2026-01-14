@@ -116,7 +116,16 @@ export default function ShopModal() {
                   Sin items aun.
                 </div>
               ) : (
-                items.map((item) => {
+                [...items]
+                  .sort((a, b) => {
+                    const aPrice = a.price ?? Number.POSITIVE_INFINITY;
+                    const bPrice = b.price ?? Number.POSITIVE_INFINITY;
+                    if (aPrice === bPrice) {
+                      return a.name.localeCompare(b.name);
+                    }
+                    return aPrice - bPrice;
+                  })
+                  .map((item) => {
                   const isOwned = owned.includes(item.id);
                   const price = item.price ?? null;
                   const canBuy =
