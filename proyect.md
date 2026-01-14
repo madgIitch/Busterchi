@@ -1,6 +1,6 @@
-﻿# Busterchi (PWA) - Resumen operativo
+﻿# Bustergochi (PWA) - Resumen operativo
 
-Resumen operativo de **Busterchi** para arrancarlo con Codex (o cualquier agente de codigo) sin ambiguedad. Esta escrito como brief + spec para que el modelo pueda generar estructura, componentes y logica desde el minuto 1.
+Resumen operativo de **Bustergochi** para arrancarlo con Codex (o cualquier agente de codigo) sin ambiguedad. Esta escrito como brief + spec para que el modelo pueda generar estructura, componentes y logica desde el minuto 1.
 
 ---
 
@@ -26,7 +26,7 @@ Resumen operativo de **Busterchi** para arrancarlo con Codex (o cualquier agente
 
 Una sola pantalla Home con:
 
-1. Header: `Busterchi` + icono pequeno del galgo + boton settings (placeholder)
+1. Header: `Bustergochi` + icono pequeno del galgo + boton settings (placeholder)
 2. Card central: escena con el galgo pixel (idle animation)
 3. Stats bars:
    - **Food**
@@ -125,7 +125,7 @@ Assets:
 ## PWA checklist (imprescindible)
 
 - `public/manifest.json` con:
-  - name/short_name: **Busterchi**
+  - name/short_name: **Bustergochi**
   - display: standalone
   - theme_color / background_color pastel
   - icons 192 y 512
@@ -200,10 +200,10 @@ public/
 ## Prompt listo para Codex (copialo tal cual)
 
 ```text
-Build a Next.js (App Router) + TypeScript PWA called "Busterchi", a kawaii pixel-art greyhound tamagotchi. Create the full project structure with TailwindCSS, Framer Motion for micro-animations, and Zustand for state.
+Build a Next.js (App Router) + TypeScript PWA called "Bustergochi", a kawaii pixel-art greyhound tamagotchi. Create the full project structure with TailwindCSS, Framer Motion for micro-animations, and Zustand for state.
 
 Requirements:
-- Single main screen (Home): header with title "Busterchi" + small icon, central pet scene card, 3 stats bars (Food/Walk/Love) plus optional Energy bar, three main action buttons (Snack/Walk/Pet), and a speech bubble with random cute messages.
+- Single main screen (Home): header with title "Bustergochi" + small icon, central pet scene card, 3 stats bars (Food/Walk/Love) plus optional Energy bar, three main action buttons (Snack/Walk/Pet), and a speech bubble with random cute messages.
 - Pet state: food, walk, love, energy (0-100), mood derived from stats, cooldown timestamps, lastUpdated timestamp, daily streak fields.
 - No running intervals; implement "decay on resume": when app loads or becomes visible, compute deltaMinutes from lastUpdated and decrease stats with given rates; clamp 0-100; recompute mood.
 - Actions: Snack +15 food +5 energy; Walk +20 walk -10 energy; Pet +18 love -2 energy; add cooldowns (Snack 2m, Walk 5m, Pet 1m) and disable buttons with remaining time.
@@ -219,4 +219,5 @@ Si quieres, en el siguiente mensaje te preparo tambien:
 
 - una paleta exacta en Tailwind (tokens),
 - el `manifest.json` final con theme colors,
-- y un set de speech bubble lines ya curadas para Busterchi.
+- y un set de speech bubble lines ya curadas para Bustergochi.
+

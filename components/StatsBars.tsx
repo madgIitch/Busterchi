@@ -1,11 +1,12 @@
 "use client";
 
+import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 
 type StatItem = {
   label: string;
   value: number;
-  icon: string;
+  iconSrc: string;
   barEmptySrc: string;
   barFullSrc: string;
   endIcon?: string;
@@ -17,17 +18,21 @@ function StatRow({ stat }: { stat: StatItem }) {
 
   useEffect(() => {
     if (stat.value > prev.current) {
-      setSparkle(true);
-      const id = setTimeout(() => setSparkle(false), 600);
-      return () => clearTimeout(id);
+      const onId = window.setTimeout(() => setSparkle(true), 0);
+      const offId = window.setTimeout(() => setSparkle(false), 600);
+      prev.current = stat.value;
+      return () => {
+        clearTimeout(onId);
+        clearTimeout(offId);
+      };
     }
     prev.current = stat.value;
   }, [stat.value]);
 
   return (
     <div className="flex items-center gap-3">
-      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-background text-base shadow-sm shadow-black/10">
-        <span aria-hidden="true">{stat.icon}</span>
+      <div className="flex h-9 w-9 items-center justify-center rounded-full bg-background shadow-sm shadow-black/10">
+        <Image src={stat.iconSrc} alt="" width={40} height={40} />
       </div>
       <div className="flex-1 space-y-1">
         <div className="flex items-center justify-between text-sm font-normal text-text">

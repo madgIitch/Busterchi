@@ -1,5 +1,6 @@
-"use client";
+﻿"use client";
 
+import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import ActionButtons from "@/components/ActionButtons";
 import PetScene from "@/components/PetScene";
@@ -53,7 +54,6 @@ export default function Home() {
     };
   }, [rehydrate, updateSpeech]);
 
-
   const cooldownMs = useMemo(
     () => ({
       snack: 2 * 60 * 1000,
@@ -76,28 +76,28 @@ export default function Home() {
     {
       label: "Food",
       value: food,
-      icon: "🦴",
+      iconSrc: "/uiElements/FoodStatusIcon.png",
       barEmptySrc: "/uiElements/ProgressEmptyFood.png",
       barFullSrc: "/uiElements/ProgressFullFood.png",
     },
     {
       label: "Walk",
       value: walk,
-      icon: "🐾",
+      iconSrc: "/uiElements/WalkStatusIcon.png",
       barEmptySrc: "/uiElements/ProgressEmptyWalk.png",
       barFullSrc: "/uiElements/ProgressFullWalk.png",
     },
     {
       label: "Love",
       value: love,
-      icon: "❤",
+      iconSrc: "/uiElements/LoveStatusIcon.png",
       barEmptySrc: "/uiElements/ProgressEmptyLove.png",
       barFullSrc: "/uiElements/ProgressFullLove.png",
     },
     {
       label: "Energy",
       value: energy,
-      icon: "🌙",
+      iconSrc: "/uiElements/EnergyStatusIcon.png",
       barEmptySrc: "/uiElements/ProgressEmptyEnergy.png",
       barFullSrc: "/uiElements/ProgressFullEnergy.png",
     },
@@ -164,13 +164,20 @@ export default function Home() {
       <main className="fit-screen mx-auto flex h-full w-full max-w-md flex-col justify-between gap-2 sm:gap-4">
         <header className="flex items-center justify-between">
           <div>
-            <h1 className="text-base font-normal sm:text-2xl">Busterchi</h1>
+            <h1 className="text-base font-normal sm:text-2xl">Bustergochi</h1>
           </div>
           <button
             type="button"
             className="h-8 w-8 rounded-full bg-surface text-text shadow-sm shadow-black/10 sm:h-10 sm:w-10"
+            aria-label="Tienda"
           >
-            ⚙
+            <Image
+              src="/uiElements/ShopIcon.png"
+              alt=""
+              width={20}
+              height={20}
+              className="mx-auto"
+            />
           </button>
         </header>
 

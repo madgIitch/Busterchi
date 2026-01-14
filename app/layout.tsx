@@ -10,7 +10,7 @@ const hachi = localFont({
 });
 
 export const metadata: Metadata = {
-  title: "Busterchi",
+  title: "Bustergochi",
   description: "Kawaii greyhound tamagotchi PWA",
   manifest: "/manifest.json",
   themeColor: "#F6C1D0",
@@ -23,7 +23,7 @@ export const metadata: Metadata = {
   },
   appleWebApp: {
     capable: true,
-    title: "Busterchi",
+    title: "Bustergochi",
     statusBarStyle: "default"
   }
 };
