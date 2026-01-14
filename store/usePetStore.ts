@@ -81,7 +81,7 @@ export const usePetStore = create<PetStore>((set) => ({
     set((state) => {
       const now = Date.now();
       const sleepCooldownActive =
-        state.cooldowns.sleep &&
+        state.cooldowns.sleep > 0 &&
         now - state.cooldowns.sleep < SLEEP_DURATION_MS;
       const sleepingNow = state.sleepUntil > now || sleepCooldownActive;
       if (sleepingNow && action !== "sleep") {
