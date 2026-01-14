@@ -15,6 +15,7 @@ export type PersistedPetState = {
   lastUpdated: number;
   lastCheckInDate: string | null;
   sleepUntil: number;
+  bucksters: number;
 };
 
 export const STORAGE_VERSION = 1;

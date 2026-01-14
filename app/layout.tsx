@@ -13,7 +13,6 @@ export const metadata: Metadata = {
   title: "Bustergochi",
   description: "Kawaii greyhound tamagotchi PWA",
   manifest: "/manifest.json",
-  themeColor: "#F6C1D0",
   icons: {
     icon: [
       { url: "/icons/icon-192.png", sizes: "192x192", type: "image/png" },
@@ -26,6 +25,10 @@ export const metadata: Metadata = {
     title: "Bustergochi",
     statusBarStyle: "default"
   }
+};
+
+export const viewport = {
+  themeColor: "#F6C1D0",
 };
 
 export default function RootLayout({

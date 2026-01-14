@@ -3,10 +3,13 @@
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import ActionButtons from "@/components/ActionButtons";
+import InventoryModal from "@/components/InventoryModal";
 import PetScene from "@/components/PetScene";
+import ShopModal from "@/components/ShopModal";
 import SpeechBubble from "@/components/SpeechBubble";
 import StatsBars from "@/components/StatsBars";
 import { usePetStore } from "@/store/usePetStore";
+import { useShopStore } from "@/store/useShopStore";
 
 export default function Home() {
   const {
@@ -21,7 +24,9 @@ export default function Home() {
     updateSpeech,
     isSleeping,
     sleepUntil,
+    bucksters,
   } = usePetStore();
+  const { openShop, openInventory, rehydrate: rehydrateShop } = useShopStore();
   const [now, setNow] = useState(0);
 
   useEffect(() => {
@@ -38,6 +43,7 @@ export default function Home() {
   useEffect(() => {
     rehydrate();
     updateSpeech();
+    rehydrateShop();
 
     const handleVisibility = () => {
       if (document.visibilityState === "visible") {
@@ -52,7 +58,7 @@ export default function Home() {
       window.removeEventListener("focus", rehydrate);
       document.removeEventListener("visibilitychange", handleVisibility);
     };
-  }, [rehydrate, updateSpeech]);
+  }, [rehydrate, rehydrateShop, updateSpeech]);
 
   const cooldownMs = useMemo(
     () => ({
@@ -166,19 +172,45 @@ export default function Home() {
           <div>
             <h1 className="text-base font-normal sm:text-2xl">Bustergochi</h1>
           </div>
-          <button
-            type="button"
-            className="h-8 w-8 rounded-full bg-surface text-text shadow-sm shadow-black/10 sm:h-10 sm:w-10"
-            aria-label="Tienda"
-          >
-            <Image
-              src="/uiElements/ShopIcon.png"
-              alt=""
-              width={20}
-              height={20}
-              className="mx-auto"
-            />
-          </button>
+          <div className="flex items-center gap-2">
+            <div className="flex items-center gap-1 rounded-full bg-surface px-2 py-1 text-[10px] text-text shadow-sm shadow-black/10 sm:text-xs">
+              <Image
+                src="/uiElements/CoinIcon.png"
+                alt=""
+                width={14}
+                height={14}
+              />
+              <span>{bucksters}</span>
+            </div>
+            <button
+              type="button"
+              className="h-8 w-8 rounded-full bg-surface text-text shadow-sm shadow-black/10 sm:h-10 sm:w-10"
+              aria-label="Inventario"
+              onClick={openInventory}
+            >
+              <Image
+                src="/uiElements/InventoryIcon.png"
+                alt=""
+                width={24}
+                height={24}
+                className="mx-auto"
+              />
+            </button>
+            <button
+              type="button"
+              className="h-8 w-8 rounded-full bg-surface text-text shadow-sm shadow-black/10 sm:h-10 sm:w-10"
+              aria-label="Tienda"
+              onClick={openShop}
+            >
+              <Image
+                src="/uiElements/ShopIcon.png"
+                alt=""
+                width={20}
+                height={20}
+                className="mx-auto"
+              />
+            </button>
+          </div>
         </header>
 
         <PetScene isSleeping={isSleepingNow} />
@@ -187,6 +219,8 @@ export default function Home() {
           <ActionButtons actions={actions} />
         </section>
         <SpeechBubble line={lastSpeechLine} />
+        <InventoryModal />
+        <ShopModal />
       </main>
     </div>
   );

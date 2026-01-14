@@ -195,6 +195,25 @@ public/
 - Barras pixelart: usar `bar_empty.png` + `bar_fill.png` con wrapper `overflow-hidden` y `image-rendering: pixelated` para animar el ancho del fill
 - QA en iOS (Add to Home Screen)
 
+**Sprint 4 (1 semana) - Tienda**
+- Pantalla de tienda (UI + layout)
+- Items cosméticos (skins, accesorios)
+- Inventario y compra simple (localStorage)
+- Categorías: banderas, carteles, vinilos, accesorios del perro, muebles, plantas, iluminación, alfombras, juguetes, paredes, ventanas, camas
+- Mostrar precio en cada producto (Bucksters)
+
+**Sprint 5 (1 semana) - Personalización habitación**
+- Personalización del entorno/room (paredes, suelo, muebles)
+- Guardado de configuraciones
+
+**Sprint 6 (1 semana) - Paseo (minijuego)**
+- Reemplazar acción simple de Walk por minijuego
+- Recompensas por paseo (estadísticas / items)
+
+**Sprint 7 (1 semana) - Animaciones completas**
+- Set completo de animaciones del pet
+- Transiciones y estados (idle, walk, sleep, etc.)
+
 ---
 
 ## Prompt listo para Codex (copialo tal cual)

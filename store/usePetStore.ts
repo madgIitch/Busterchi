@@ -22,10 +22,12 @@ type PetStore = PetStats & {
   lastCheckInDate: string | null;
   isSleeping: boolean;
   sleepUntil: number;
+  bucksters: number;
   setStat: (key: keyof PetStats, value: number) => void;
   performAction: (action: ActionKey) => void;
   rehydrate: () => void;
   updateSpeech: () => void;
+  spendBucksters: (amount: number) => boolean;
 };
 
 const defaultStats: PetStats = {
@@ -49,6 +51,12 @@ const COOLDOWN_MS: Record<ActionKey, number> = {
   sleep: 10 * 60 * 1000,
 };
 const SLEEP_DURATION_MS = 10 * 60 * 1000;
+const BUCKSTER_REWARD: Record<ActionKey, number> = {
+  snack: 1,
+  walk: 2,
+  pet: 1,
+  sleep: 3,
+};
 
 const clampStat = (value: number) => Math.max(0, Math.min(100, value));
 
@@ -63,6 +71,7 @@ export const usePetStore = create<PetStore>((set) => ({
   lastCheckInDate: null,
   isSleeping: false,
   sleepUntil: 0,
+  bucksters: 0,
   setStat: (key, value) =>
     set((state) => ({
       ...state,
@@ -123,6 +132,7 @@ export const usePetStore = create<PetStore>((set) => ({
         lastCheckInDate: getTodayKey(),
         isSleeping: nextIsSleeping,
         sleepUntil: nextSleepUntil,
+        bucksters: state.bucksters + BUCKSTER_REWARD[action],
       };
     });
   },
@@ -168,6 +178,7 @@ export const usePetStore = create<PetStore>((set) => ({
         lastCheckInDate: stored?.lastCheckInDate ?? null,
         isSleeping,
         sleepUntil,
+        bucksters: stored?.bucksters ?? state.bucksters,
       };
     });
   },
@@ -183,6 +194,21 @@ export const usePetStore = create<PetStore>((set) => ({
             energy: state.energy,
           }),
     }));
+  },
+  spendBucksters: (amount) => {
+    if (amount <= 0) {
+      return true;
+    }
+    let success = false;
+    set((state) => {
+      if (state.bucksters < amount) {
+        success = false;
+        return state;
+      }
+      success = true;
+      return { ...state, bucksters: state.bucksters - amount };
+    });
+    return success;
   },
 }));
 
@@ -201,6 +227,7 @@ if (typeof window !== "undefined") {
       lastUpdated: state.lastUpdated,
       lastCheckInDate: state.lastCheckInDate,
       sleepUntil: state.sleepUntil,
+      bucksters: state.bucksters,
     };
     writeStorage(payload);
   });
