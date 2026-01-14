@@ -17,7 +17,7 @@ type ShopStore = {
   closeInventory: () => void;
   selectCategory: (categoryId: string) => void;
   purchaseItem: (itemId: string) => void;
-  rehydrate: () => void;
+  rehydrate: () => Promise<void>;
 };
 
 const defaultCategory = SHOP_CATEGORIES[0]?.id ?? "banderas";
@@ -38,8 +38,8 @@ export const useShopStore = create<ShopStore>((set) => ({
         ? state
         : { ...state, owned: [...state.owned, itemId] },
     ),
-  rehydrate: () => {
-    const stored = readShopStorage();
+  rehydrate: async () => {
+    const stored = await readShopStorage();
     if (!stored) {
       return;
     }
@@ -52,7 +52,7 @@ export const useShopStore = create<ShopStore>((set) => ({
 
 if (typeof window !== "undefined") {
   useShopStore.subscribe((state) => {
-    writeShopStorage({
+    void writeShopStorage({
       version: SHOP_STORAGE_VERSION,
       owned: state.owned,
       selectedCategory: state.selectedCategory,

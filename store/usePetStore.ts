@@ -25,7 +25,7 @@ type PetStore = PetStats & {
   bucksters: number;
   setStat: (key: keyof PetStats, value: number) => void;
   performAction: (action: ActionKey) => void;
-  rehydrate: () => void;
+  rehydrate: () => Promise<void>;
   updateSpeech: () => void;
   spendBucksters: (amount: number) => boolean;
 };
@@ -136,10 +136,10 @@ export const usePetStore = create<PetStore>((set) => ({
       };
     });
   },
-  rehydrate: () => {
+  rehydrate: async () => {
+    const stored = await readStorage();
     set((state) => {
       const now = Date.now();
-      const stored = readStorage();
       const lastUpdatedBase =
         stored?.lastUpdated ?? (state.lastUpdated || now);
       const baseSleepUntil = stored?.sleepUntil ?? state.sleepUntil;
@@ -229,6 +229,6 @@ if (typeof window !== "undefined") {
       sleepUntil: state.sleepUntil,
       bucksters: state.bucksters,
     };
-    writeStorage(payload);
+    void writeStorage(payload);
   });
 }

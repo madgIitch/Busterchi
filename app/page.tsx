@@ -31,7 +31,7 @@ export default function Home() {
 
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 1000);
-    const decayId = setInterval(() => rehydrate(), 60 * 1000);
+    const decayId = setInterval(() => void rehydrate(), 60 * 1000);
     const speechId = setInterval(() => updateSpeech(), 30 * 1000);
     return () => {
       clearInterval(id);
@@ -41,21 +41,23 @@ export default function Home() {
   }, [rehydrate, updateSpeech]);
 
   useEffect(() => {
-    rehydrate();
+    void rehydrate();
     updateSpeech();
+    void rehydrateShop();
     rehydrateShop();
 
     const handleVisibility = () => {
       if (document.visibilityState === "visible") {
-        rehydrate();
+        void rehydrate();
       }
     };
 
-    window.addEventListener("focus", rehydrate);
+    const handleFocus = () => void rehydrate();
+    window.addEventListener("focus", handleFocus);
     document.addEventListener("visibilitychange", handleVisibility);
 
     return () => {
-      window.removeEventListener("focus", rehydrate);
+      window.removeEventListener("focus", handleFocus);
       document.removeEventListener("visibilitychange", handleVisibility);
     };
   }, [rehydrate, rehydrateShop, updateSpeech]);
