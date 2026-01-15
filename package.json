@@ -7,7 +7,8 @@
                     "build":  "next build",
                     "start":  "next start",
                     "lint":  "eslint",
-                    "simulate:combat":  "tsc -p tsconfig.scripts.json && node .sim/scripts/simulate-combat.js"
+                    "simulate:combat":  "tsc -p tsconfig.scripts.json && node .sim/scripts/simulate-combat.js",
+                    "analyze:reports":  "tsc -p tsconfig.scripts.json && node .sim/scripts/analyze-reports.js"
                 },
     "dependencies":  {
                          "next":  "16.1.1",

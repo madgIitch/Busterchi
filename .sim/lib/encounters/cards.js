@@ -10,10 +10,9 @@ exports.CARD_CATALOG = [
         cost: 2,
         rarity: "common",
         effects: [
-            { type: "enemy_hp_pct", value: 6 },
+            { type: "enemy_hp_pct", value: 8 },
             { type: "rhythm_add", value: 2 },
-            { type: "stress_add", value: 6 },
-            { type: "stress_add", value: 10 },
+            { type: "stress_add", value: 8 },
         ],
     },
     {
@@ -94,7 +93,6 @@ exports.CARD_CATALOG = [
         rarity: "common",
         effects: [
             { type: "enemy_hp_flat", value: 4 },
-            { type: "stress_add", value: 3 },
             { type: "calm_add", value: 1 },
         ],
     },
@@ -105,8 +103,7 @@ exports.CARD_CATALOG = [
         cost: 1,
         rarity: "common",
         effects: [
-            { type: "enemy_hp_flat", value: 4 },
-            { type: "stress_add", value: 3 },
+            { type: "enemy_hp_flat", value: 5 },
             { type: "note", text: "Este turno no generas Estres" },
         ],
     },
@@ -118,8 +115,7 @@ exports.CARD_CATALOG = [
         rarity: "rare",
         effects: [
             { type: "enemy_hp_flat", value: 6 },
-            { type: "stress_add", value: 5 },
-            { type: "stress_reduce", value: 12 },
+            { type: "stress_reduce", value: 8 },
             { type: "confusion_remove", value: 1 },
         ],
     },
@@ -131,7 +127,6 @@ exports.CARD_CATALOG = [
         rarity: "common",
         effects: [
             { type: "enemy_hp_flat", value: 4 },
-            { type: "stress_add", value: 3 },
             { type: "repeat_enemy_last" },
         ],
     },
@@ -144,6 +139,18 @@ exports.CARD_CATALOG = [
         effects: [
             { type: "note", text: "Cancela efectos de movimiento" },
             { type: "confusion_add", value: 1 },
+        ],
+    },
+    {
+        id: "calma_protesta_pacifica",
+        name: "Protesta Pacifica",
+        element: "calma",
+        cost: 1,
+        rarity: "rare",
+        effects: [
+            { type: "enemy_hp_flat", value: 8 },
+            { type: "stress_add", value: 2 },
+            { type: "note", text: "Efecto reducido en jefes" },
         ],
     },
     {
@@ -215,6 +222,18 @@ exports.CARD_CATALOG = [
         ],
     },
     {
+        id: "caos_ciberactivismo",
+        name: "Ciberactivismo",
+        element: "caos",
+        cost: 2,
+        rarity: "rare",
+        effects: [
+            { type: "enemy_hp_flat", value: 6 },
+            { type: "confusion_add", value: 1 },
+            { type: "stress_add", value: 4 },
+        ],
+    },
+    {
         id: "caos_interrumpir_todo",
         name: "Interrumpir todo",
         element: "caos",
@@ -257,6 +276,18 @@ exports.CARD_CATALOG = [
         cost: 2,
         rarity: "rare",
         effects: [{ type: "skip_enemy_action" }],
+    },
+    {
+        id: "vinculo_voz_ciudadana",
+        name: "Voz Ciudadana",
+        element: "vinculo",
+        cost: 1,
+        rarity: "common",
+        effects: [
+            { type: "stress_reduce", value: 8 },
+            { type: "calm_add", value: 1 },
+            { type: "note", text: "Apoyo popular" },
+        ],
     },
     {
         id: "vinculo_mimos_recordados",

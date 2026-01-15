@@ -11,6 +11,7 @@
   },
   "include": [
     "scripts/simulate-combat.ts",
+    "scripts/analyze-reports.ts",
     "combat.ts",
     "lib/encounters/**/*.ts"
   ]

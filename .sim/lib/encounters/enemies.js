@@ -12,7 +12,7 @@ exports.ENEMY_DECKS = [
                 id: "orden_mirada_fija",
                 name: "Mirada fija",
                 element: "territorio",
-                effects: [{ type: "stress_add", value: 8 }],
+                effects: [{ type: "stress_add", value: 13 }],
                 tag: "basic",
             },
             {
@@ -53,18 +53,22 @@ exports.ENEMY_DECKS = [
                 tag: "strong",
             },
             {
-                id: "orden_presencia_constante",
-                name: "Presencia constante",
-                element: "territorio",
-                effects: [{ type: "note", text: "Estres +3/turno mientras activo" }],
-                tag: "basic",
-            },
-            {
                 id: "orden_identidad",
                 name: "Todo bajo control",
                 element: "calma",
                 effects: [{ type: "repeat_enemy_last" }],
                 tag: "identity",
+            },
+            {
+                id: "orden_antidisturbios",
+                name: "Antidisturbios",
+                element: "territorio",
+                effects: [
+                    { type: "stress_add", value: 6 },
+                    { type: "note", text: "Requiere Presion para ser mas fuerte" },
+                ],
+                cooldown: 2,
+                tag: "strong",
             },
         ],
     },
@@ -79,6 +83,7 @@ exports.ENEMY_DECKS = [
                 name: "Risa colectiva",
                 element: "caos",
                 effects: [
+                    { type: "stress_add", value: 2 },
                     { type: "note", text: "50% +6 Estres / 50% -6 Estres" },
                 ],
                 tag: "basic",
@@ -88,6 +93,7 @@ exports.ENEMY_DECKS = [
                 name: "Cantico improvisado",
                 element: "caos",
                 effects: [
+                    { type: "stress_add", value: 2 },
                     { type: "confusion_add", value: 1 },
                 ],
                 tag: "basic",
@@ -98,7 +104,7 @@ exports.ENEMY_DECKS = [
                 element: "caos",
                 effects: [
                     { type: "stress_add", value: 2 },
-                    { type: "note", text: "Si no juegas carta: +10 Estres" },
+                    { type: "note", text: "Si no juegas carta: +6 Estres" },
                 ],
                 tag: "reactive",
             },
@@ -128,7 +134,7 @@ exports.ENEMY_DECKS = [
                 name: "Una mas y nos vamos",
                 element: "caos",
                 effects: [
-                    { type: "stress_add", value: 2 },
+                    { type: "stress_add", value: 3 },
                     { type: "note", text: "+2 Ritmo a ambos" },
                 ],
                 cooldown: 2,
@@ -139,7 +145,7 @@ exports.ENEMY_DECKS = [
                 name: "Ambiente cargado",
                 element: "caos",
                 effects: [
-                    { type: "stress_add", value: 1 },
+                    { type: "stress_add", value: 3 },
                     { type: "note", text: "Estres +2/turno" },
                 ],
                 tag: "basic",
@@ -154,6 +160,17 @@ exports.ENEMY_DECKS = [
                 ],
                 tag: "identity",
             },
+            {
+                id: "txiki_revolucion_festiva",
+                name: "Revolucion festiva",
+                element: "caos",
+                effects: [
+                    { type: "stress_add", value: 2 },
+                    { type: "note", text: "Contraataque ligero" },
+                ],
+                cooldown: 2,
+                tag: "strong",
+            },
         ],
     },
     {
@@ -167,6 +184,7 @@ exports.ENEMY_DECKS = [
                 name: "Argumento circular",
                 element: "caos",
                 effects: [
+                    { type: "stress_add", value: 3 },
                     { type: "confusion_add", value: 1 },
                 ],
                 tag: "basic",
@@ -177,7 +195,7 @@ exports.ENEMY_DECKS = [
                 element: "territorio",
                 effects: [
                     { type: "stress_add", value: 2 },
-                    { type: "note", text: "Si jugaste CAOS: +12 Estres" },
+                    { type: "note", text: "Si jugaste CAOS: +6 Estres" },
                 ],
                 tag: "reactive",
             },
@@ -186,7 +204,7 @@ exports.ENEMY_DECKS = [
                 name: "Monologo largo",
                 element: "caos",
                 effects: [
-                    { type: "stress_add", value: 1 },
+                    { type: "stress_add", value: 3 },
                     { type: "note", text: "Bloquea una carta" },
                 ],
                 tag: "basic",
@@ -203,7 +221,7 @@ exports.ENEMY_DECKS = [
                 name: "Cambio de marco",
                 element: "caos",
                 effects: [
-                    { type: "stress_add", value: 2 },
+                    { type: "stress_add", value: 3 },
                     { type: "note", text: "Convierte CALMA en Confusion" },
                 ],
                 cooldown: 2,
@@ -213,7 +231,7 @@ exports.ENEMY_DECKS = [
                 id: "ideo_autoridad",
                 name: "Autoridad moral",
                 element: "territorio",
-                effects: [{ type: "stress_add", value: 3 }],
+                effects: [{ type: "stress_add", value: 2 }],
                 cooldown: 2,
                 tag: "strong",
             },
@@ -222,7 +240,7 @@ exports.ENEMY_DECKS = [
                 name: "No escucha",
                 element: "territorio",
                 effects: [
-                    { type: "stress_add", value: 1 },
+                    { type: "stress_add", value: 3 },
                     { type: "note", text: "Ignora tu ultima defensa" },
                 ],
                 tag: "basic",
@@ -232,10 +250,22 @@ exports.ENEMY_DECKS = [
                 name: "Saturacion discursiva",
                 element: "caos",
                 effects: [
-                    { type: "stress_add", value: 2 },
+                    { type: "stress_add", value: 3 },
                     { type: "note", text: "Cada turno +1 Confusion" },
                 ],
                 tag: "identity",
+            },
+            {
+                id: "ideo_propaganda_radical",
+                name: "Propaganda radical",
+                element: "caos",
+                effects: [
+                    { type: "stress_add", value: 2 },
+                    { type: "confusion_add", value: 1 },
+                    { type: "note", text: "Desgaste ideologico" },
+                ],
+                cooldown: 3,
+                tag: "strong",
             },
         ],
     },
@@ -274,7 +304,7 @@ exports.ENEMY_DECKS = [
                 element: "caos",
                 effects: [
                     { type: "confusion_add", value: 1 },
-                    { type: "stress_add", value: 1 },
+                    { type: "stress_add", value: 7 },
                 ],
                 tag: "basic",
             },
@@ -283,7 +313,7 @@ exports.ENEMY_DECKS = [
                 name: "Cambio de foco",
                 element: "caos",
                 effects: [
-                    { type: "stress_add", value: 2 },
+                    { type: "stress_add", value: 5 },
                     { type: "note", text: "Cancela tu proximo efecto" },
                 ],
                 cooldown: 2,
@@ -314,10 +344,22 @@ exports.ENEMY_DECKS = [
                 name: "Esto no va de ti",
                 element: "caos",
                 effects: [
-                    { type: "stress_add", value: 2 },
+                    { type: "stress_add", value: 5 },
                     { type: "note", text: "El enemigo elige tu carta" },
                 ],
                 tag: "identity",
+            },
+            {
+                id: "med_control_informativo",
+                name: "Control informativo",
+                element: "caos",
+                effects: [
+                    { type: "stress_add", value: 2 },
+                    { type: "confusion_add", value: 1 },
+                    { type: "note", text: "Desorganiza la estrategia" },
+                ],
+                cooldown: 2,
+                tag: "strong",
             },
         ],
     },
@@ -380,18 +422,26 @@ exports.ENEMY_DECKS = [
                 id: "tpose_identidad",
                 name: "Nada",
                 element: "territorio",
-                effects: [
-                    { type: "stress_add", value: 2 },
-                    { type: "note", text: "Nada" },
-                ],
+                effects: [{ type: "note", text: "Nada" }],
                 tag: "identity",
+            },
+            {
+                id: "tpose_apoyo_infantil",
+                name: "Apoyo infantil",
+                element: "territorio",
+                effects: [
+                    { type: "stress_add", value: 3 },
+                    { type: "note", text: "Aplauso ingenuo" },
+                ],
+                cooldown: 2,
+                tag: "strong",
             },
         ],
     },
     {
         id: "idea_fundacional",
         name: "La Idea Fundacional",
-        elements: ["impulso", "calma", "caos", "vinculo", "territorio"],
+        elements: ["territorio", "calma"],
         pattern: "rotation",
         cards: [
             {
@@ -429,7 +479,7 @@ exports.ENEMY_DECKS = [
                 name: "Institucionalizar",
                 element: "territorio",
                 effects: [
-                    { type: "stress_add", value: 3 },
+                    { type: "stress_add", value: 2 },
                     { type: "note", text: "TERRITORIO +10% dano" },
                 ],
                 tag: "strong",
@@ -437,12 +487,12 @@ exports.ENEMY_DECKS = [
             {
                 id: "idea_contradiccion",
                 name: "Contradiccion",
-                element: "caos",
+                element: "calma",
                 effects: [
-                    { type: "stress_add", value: 4 },
+                    { type: "stress_add", value: 2 },
                     { type: "note", text: "Cancela tu ultima decision" },
                 ],
-                cooldown: 2,
+                cooldown: 3,
                 tag: "strong",
             },
             {
@@ -450,8 +500,7 @@ exports.ENEMY_DECKS = [
                 name: "Peso simbolico",
                 element: "territorio",
                 effects: [
-                    { type: "stress_add", value: 4 },
-                    { type: "note", text: "Estres escala por turno" },
+                    { type: "stress_add", value: 5 },
                 ],
                 cooldown: 2,
                 tag: "strong",
@@ -459,9 +508,9 @@ exports.ENEMY_DECKS = [
             {
                 id: "idea_reescritura",
                 name: "Reescritura",
-                element: "caos",
+                element: "calma",
                 effects: [
-                    { type: "stress_add", value: 2 },
+                    { type: "stress_add", value: 1 },
                     { type: "note", text: "Transforma una carta del mazo" },
                 ],
                 tag: "basic",

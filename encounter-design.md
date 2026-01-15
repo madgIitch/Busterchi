@@ -359,3 +359,73 @@ Sin explicar fórmulas. **Se siente**.
 2) Diseñar **relics que modifiquen % elemental**
 3) Diseñar **enemigos concretos con sets de ataques**
 4) Afinar números (factor, caps, límites)
+
+---
+
+# Ajustes de balance (propuesta)
+
+## Cartas del jugador
+
+### Protesta Pacifica
+- Problema: efecto debil vs coste.
+- Propuesta: buff del efecto o bajar coste.
+- Impacto esperado: mas margen contra orden_publico e ideologizado.
+
+### Voz Ciudadana
+- Problema: deja al jugador corto de recursos vs ideologizado y mediatico.
+- Propuesta: buff de eficacia o bajar rareza.
+- Impacto esperado: mejor ventana de victoria vs mediatico.
+
+### Ciberactivismo
+- Problema: demasiado fuerte contra tpose y txikiteros.
+- Propuesta: nerf leve (subir coste o bajar dano).
+- Impacto esperado: evitar trivializar encuentros medios.
+
+### Otras cartas del jugador
+- Revisar cartas dominantes (70-80% de presencia en mazos ganadores).
+- Nerfearlas con coste o poder si rompen meta.
+- Buffear cartas casi nunca usadas.
+- Objetivo: estrategias variadas y viables.
+
+## Cartas de enemigos
+
+### Antidisturbios (orden_publico)
+- Problema: carta clave con dano alto o elimina cartas.
+- Propuesta: nerf (menos dano o requisito previo).
+
+### Control Informativo (mediatico)
+- Problema: desorganiza en exceso; victoria del jugador muy alta.
+- Propuesta: ajuste leve (condicion especial o coste mas alto).
+
+### Propaganda Radical (ideologizado)
+- Problema: victoria del jugador muy baja.
+- Propuesta: buff (mas descarte o menos requisitos).
+- Objetivo: subir dificultad a rango objetivo.
+
+### Revolucion Festiva (txikiteros)
+- Problema: encuentro demasiado facil.
+- Propuesta: nerf leve (coste mayor o contraataque ligero).
+- Objetivo: 55-65% de victoria del jugador.
+
+### Apoyo Infantil (tpose)
+- Problema: tpose demasiado debil.
+- Propuesta: buff fuerte (mas dano o efecto extra al morir).
+- Objetivo: que deje de ser trivial.
+
+### Idea Fundacional (jefe)
+- Mantener alta dificultad (win rate < 10%).
+- Asegurar cartas clave muy potentes.
+- Posible umbral final que debilite acciones del jugador.
+
+## Afinidades elementales
+
+- Revisar ciclo elemental para evitar dominancia.
+- Ajustar elementos de enemigos segun dificultad.
+- Ideologizado y orden_publico pueden compartir o contradecir afinidades.
+- Tpose podria cambiar de elemento para no ser trivial.
+
+## Objetivo global de balance
+
+- Orden_publico, ideologizado, mediatico, txikiteros y tpose: 45-65% win.
+- Idea_fundacional: < 10% win.
+- Igualar coste y beneficio de cada carta.
