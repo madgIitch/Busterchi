@@ -95,7 +95,7 @@ export function createCombatState(
   playerDeck: CardDefinition[],
   enemyDeck: EnemyDeck,
 ) {
-  const initialDeck = [...playerDeck];
+  const initialDeck = shuffle(playerDeck);
   const state: CombatState = {
     turn: 1,
     phase: "A",
