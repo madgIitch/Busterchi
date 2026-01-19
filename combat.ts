@@ -127,7 +127,7 @@ export function createCombatState(
     playerCardsPlayed: 0,
     log: [],
   };
-  drawCards(state, 5);
+  drawCards(state, 3);
   return state;
 }
 

@@ -11,12 +11,14 @@ type ShopStore = {
   isInventoryOpen: boolean;
   selectedCategory: string;
   owned: string[];
+  deck: string[];
   openShop: () => void;
   closeShop: () => void;
   openInventory: () => void;
   closeInventory: () => void;
   selectCategory: (categoryId: string) => void;
   purchaseItem: (itemId: string) => void;
+  toggleDeckCard: (cardId: string) => void;
   rehydrate: () => Promise<void>;
 };
 
@@ -27,6 +29,7 @@ export const useShopStore = create<ShopStore>((set) => ({
   isInventoryOpen: false,
   selectedCategory: defaultCategory,
   owned: [],
+  deck: [],
   openShop: () => set({ isOpen: true }),
   closeShop: () => set({ isOpen: false }),
   openInventory: () => set({ isInventoryOpen: true }),
@@ -38,6 +41,12 @@ export const useShopStore = create<ShopStore>((set) => ({
         ? state
         : { ...state, owned: [...state.owned, itemId] },
     ),
+  toggleDeckCard: (cardId) =>
+    set((state) =>
+      state.deck.includes(cardId)
+        ? { ...state, deck: state.deck.filter((id) => id !== cardId) }
+        : { ...state, deck: [...state.deck, cardId] },
+    ),
   rehydrate: async () => {
     const stored = await readShopStorage();
     if (!stored) {
@@ -46,6 +55,7 @@ export const useShopStore = create<ShopStore>((set) => ({
     set({
       owned: stored.owned ?? [],
       selectedCategory: stored.selectedCategory ?? defaultCategory,
+      deck: stored.deck ?? [],
     });
   },
 }));
@@ -56,6 +66,7 @@ if (typeof window !== "undefined") {
       version: SHOP_STORAGE_VERSION,
       owned: state.owned,
       selectedCategory: state.selectedCategory,
+      deck: state.deck,
     });
   });
 }

@@ -18,19 +18,19 @@ export default function ActionButtons({ actions }: { actions: ActionItem[] }) {
             type="button"
             disabled={action.disabled}
             onClick={action.onClick}
-            className="flex h-20 w-full items-end justify-center rounded-3xl shadow-lg shadow-black/15 transition-opacity transition-transform active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
+            className="flex h-20 w-full items-end justify-center rounded-3xl shadow-lg shadow-black/15 transition active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
           >
             <Image
               src={action.imageSrc}
               alt={`${action.label} button`}
               width={180}
               height={180}
-              className={`h-[72px] w-auto object-contain object-bottom ${action.imageClassName ?? ""}`}
+              className={`h-18 w-auto object-contain object-bottom ${action.imageClassName ?? ""}`}
             />
             <span className="sr-only">{action.label}</span>
           </button>
           {action.cooldownLabel ? (
-            <span className="text-[10px] text-[var(--color-muted)]">
+            <span className="text-[10px] text-muted">
               {action.cooldownLabel}
             </span>
           ) : (
