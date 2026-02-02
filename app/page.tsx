@@ -9,6 +9,7 @@ import ShopModal from "@/components/ShopModal";
 import SpeechBubble from "@/components/SpeechBubble";
 import StatsBars from "@/components/StatsBars";
 import WalkGameModal from "@/components/WalkGameModal";
+import { ENABLE_WALK_GAME } from "@/lib/encounters/config";
 import { usePetStore } from "@/store/usePetStore";
 import { useShopStore } from "@/store/useShopStore";
 
@@ -146,6 +147,7 @@ export default function Home() {
           : "",
       onClick: () => {
         performAction("walk");
+        setIsWalkGameOpen(ENABLE_WALK_GAME);
       },
     },
     {

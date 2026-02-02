@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useState } from "react";
 import { CARD_CATALOG } from "@/lib/encounters/cards";
+import { ENABLE_WALK_GAME } from "@/lib/encounters/config";
 import type { CardDefinition } from "@/lib/encounters/types";
 import { useShopStore } from "@/store/useShopStore";
 
@@ -78,6 +79,8 @@ export default function InventoryModal() {
   const { isInventoryOpen, closeInventory, owned, deck, toggleDeckCard } =
     useShopStore();
   const [activeTab, setActiveTab] = useState<"inventory" | "deck">("inventory");
+  const isDeckEnabled = ENABLE_WALK_GAME;
+  const effectiveTab = isDeckEnabled ? activeTab : "inventory";
   const [isDeckLimitHit, setIsDeckLimitHit] = useState(false);
   const maxDeckSize = 12;
   const catalogById = new Map(CARD_CATALOG.map((card) => [card.id, card]));
@@ -145,32 +148,36 @@ export default function InventoryModal() {
               type="button"
               onClick={() => setActiveTab("inventory")}
               className={`rounded-full px-3 py-1 text-xs ${
-                activeTab === "inventory"
+                effectiveTab === "inventory"
                   ? "bg-[var(--color-primary)] text-text"
                   : "bg-background text-muted"
               }`}
             >
               Inventario
             </button>
-            <button
-              type="button"
-              onClick={() => setActiveTab("deck")}
-              className={`rounded-full px-3 py-1 text-xs ${
-                activeTab === "deck"
-                  ? "bg-[var(--color-primary)] text-text"
-                  : "bg-background text-muted"
-              }`}
-            >
-              Mazo
-            </button>
-            {activeTab === "deck" ? (
-              <div className="text-xs text-muted">
-                {deck.length}/{maxDeckSize}
-              </div>
+            {isDeckEnabled ? (
+              <>
+                <button
+                  type="button"
+                  onClick={() => setActiveTab("deck")}
+                  className={`rounded-full px-3 py-1 text-xs ${
+                    effectiveTab === "deck"
+                      ? "bg-[var(--color-primary)] text-text"
+                      : "bg-background text-muted"
+                  }`}
+                >
+                  Mazo
+                </button>
+                {effectiveTab === "deck" ? (
+                  <div className="text-xs text-muted">
+                    {deck.length}/{maxDeckSize}
+                  </div>
+                ) : null}
+              </>
             ) : null}
           </div>
 
-          {activeTab === "inventory" ? (
+          {effectiveTab === "inventory" ? (
             owned.length === 0 ? (
               <div className="rounded-2xl bg-background p-4 text-sm text-muted">
                 Inventario vacio.
