@@ -76,8 +76,15 @@ const getCardEffectsDescription = (card: CardDefinition) => {
 };
 
 export default function InventoryModal() {
-  const { isInventoryOpen, closeInventory, owned, deck, toggleDeckCard } =
-    useShopStore();
+  const {
+    isInventoryOpen,
+    closeInventory,
+    owned,
+    deck,
+    decorations,
+    toggleDeckCard,
+    toggleDecoration,
+  } = useShopStore();
   const [activeTab, setActiveTab] = useState<"inventory" | "deck">("inventory");
   const isDeckEnabled = ENABLE_WALK_GAME;
   const effectiveTab = isDeckEnabled ? activeTab : "inventory";
@@ -184,7 +191,9 @@ export default function InventoryModal() {
               </div>
             ) : (
               <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                {owned.map((id) => (
+                {owned.map((id) => {
+                  const isPlaced = decorations.includes(id);
+                  return (
                   <div
                     key={id}
                     className="rounded-2xl bg-background p-3 shadow-sm shadow-black/10"
@@ -201,8 +210,16 @@ export default function InventoryModal() {
                     <p className="mt-2 break-words text-xs leading-4">
                       {formatNameFromId(id)}
                     </p>
+                    <button
+                      type="button"
+                      onClick={() => toggleDecoration(id)}
+                      className="mt-2 w-full rounded-full bg-surface px-2 py-1 text-[10px] text-text shadow-sm shadow-black/10"
+                    >
+                      {isPlaced ? "Quitar de casa" : "Colocar en casa"}
+                    </button>
                   </div>
-                ))}
+                );
+                })}
               </div>
             )
           ) : (

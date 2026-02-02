@@ -1,20 +1,93 @@
 import Image from "next/image";
+import { useEffect, useRef, useState } from "react";
+import {
+  DECORATION_OVERRIDES,
+  DECORATION_SLOTS,
+  DEFAULT_DECORATION_SLOT,
+} from "@/lib/decorations/layout";
+import { useShopStore } from "@/store/useShopStore";
 
 export default function PetScene({ isSleeping }: { isSleeping: boolean }) {
   const petImage = isSleeping ? "/pet/buster_sleep.png" : "/pet/buster_idle.png";
   const altText = isSleeping ? "Buster sleeping" : "Buster idle";
+  const decorations = useShopStore((state) => state.decorations);
+  const sceneRef = useRef<HTMLDivElement | null>(null);
+  const [sceneScale, setSceneScale] = useState(1);
+
+  useEffect(() => {
+    const node = sceneRef.current;
+    if (!node) {
+      return;
+    }
+    const baseWidth = 1536;
+    const baseHeight = 1025;
+    const observer = new ResizeObserver((entries) => {
+      const entry = entries[0];
+      if (!entry) {
+        return;
+      }
+      const { width, height } = entry.contentRect;
+      if (!width || !height) {
+        return;
+      }
+      const scale = Math.min(width / baseWidth, height / baseHeight);
+      setSceneScale(scale);
+    });
+    observer.observe(node);
+    return () => observer.disconnect();
+  }, []);
+
+  const placedDecorations = decorations.map((itemId, index) => {
+    const category = itemId.split("/")[0] ?? "";
+    const slot =
+      DECORATION_OVERRIDES[itemId] ??
+      DECORATION_SLOTS[category] ??
+      DEFAULT_DECORATION_SLOT;
+    const offset = slot.stackOffset ?? { x: 0, y: 0 };
+    const left = `calc(${slot.leftPct}% + ${
+      offset.x * index * sceneScale
+    }px)`;
+    const top = `calc(${slot.topPct}% + ${offset.y * index * sceneScale}px)`;
+    return {
+      itemId,
+      left,
+      top,
+      zIndex: slot.zIndex + index,
+      widthPx: slot.widthPx ? slot.widthPx * sceneScale : undefined,
+      heightPx: slot.heightPx ? slot.heightPx * sceneScale : undefined,
+    };
+  });
 
   return (
     <section className="w-full rounded-3xl bg-surface p-4 shadow-lg shadow-black/10 sm:p-6">
-      <div className="relative w-full aspect-[3/2] overflow-hidden rounded-2xl bg-background/60">
+      <div
+        ref={sceneRef}
+        className="relative w-full aspect-[3/2] overflow-hidden rounded-2xl bg-background/60"
+      >
         <Image
-          src="/scenes/housePlaceholder.png"
+          src="/scenes/hoseplaceholder.png"
           alt=""
           fill
           priority
           className="object-cover"
           sizes="(max-width: 768px) 100vw, 420px"
         />
+        {placedDecorations.map((decoration) => (
+          <img
+            key={decoration.itemId}
+            src={`/store/${decoration.itemId}`}
+            alt=""
+            className="absolute"
+            style={{
+              left: decoration.left,
+              top: decoration.top,
+              transform: "translate(-50%, -50%)",
+              width: decoration.widthPx ? `${decoration.widthPx}px` : undefined,
+              height: decoration.heightPx ? `${decoration.heightPx}px` : undefined,
+              zIndex: decoration.zIndex,
+            }}
+          />
+        ))}
         <Image
           src={petImage}
           alt={altText}

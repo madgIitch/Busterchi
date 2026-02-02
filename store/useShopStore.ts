@@ -12,6 +12,7 @@ type ShopStore = {
   selectedCategory: string;
   owned: string[];
   deck: string[];
+  decorations: string[];
   openShop: () => void;
   closeShop: () => void;
   openInventory: () => void;
@@ -19,6 +20,7 @@ type ShopStore = {
   selectCategory: (categoryId: string) => void;
   purchaseItem: (itemId: string) => void;
   toggleDeckCard: (cardId: string) => void;
+  toggleDecoration: (itemId: string) => void;
   rehydrate: () => Promise<void>;
 };
 
@@ -30,6 +32,7 @@ export const useShopStore = create<ShopStore>((set) => ({
   selectedCategory: defaultCategory,
   owned: [],
   deck: [],
+  decorations: [],
   openShop: () => set({ isOpen: true }),
   closeShop: () => set({ isOpen: false }),
   openInventory: () => set({ isInventoryOpen: true }),
@@ -47,6 +50,26 @@ export const useShopStore = create<ShopStore>((set) => ({
         ? { ...state, deck: state.deck.filter((id) => id !== cardId) }
         : { ...state, deck: [...state.deck, cardId] },
     ),
+  toggleDecoration: (itemId) =>
+    set((state) => {
+      if (state.decorations.includes(itemId)) {
+        return {
+          ...state,
+          decorations: state.decorations.filter((id) => id !== itemId),
+        };
+      }
+      const category = itemId.split("/")[0] ?? "";
+      if (category === "banderas") {
+        const withoutFlags = state.decorations.filter(
+          (id) => !id.startsWith("banderas/"),
+        );
+        return {
+          ...state,
+          decorations: [...withoutFlags, itemId],
+        };
+      }
+      return { ...state, decorations: [...state.decorations, itemId] };
+    }),
   rehydrate: async () => {
     const stored = await readShopStorage();
     if (!stored) {
@@ -56,6 +79,7 @@ export const useShopStore = create<ShopStore>((set) => ({
       owned: stored.owned ?? [],
       selectedCategory: stored.selectedCategory ?? defaultCategory,
       deck: stored.deck ?? [],
+      decorations: stored.decorations ?? [],
     });
   },
 }));
@@ -67,6 +91,7 @@ if (typeof window !== "undefined") {
       owned: state.owned,
       selectedCategory: state.selectedCategory,
       deck: state.deck,
+      decorations: state.decorations,
     });
   });
 }

@@ -5,6 +5,7 @@ export type ShopPersistedState = {
   owned: string[];
   selectedCategory: string | null;
   deck: string[];
+  decorations: string[];
 };
 
 type ShopPersistedStateV1 = {
@@ -13,7 +14,14 @@ type ShopPersistedStateV1 = {
   selectedCategory: string | null;
 };
 
-export const SHOP_STORAGE_VERSION = 2;
+type ShopPersistedStateV2 = {
+  version: 2;
+  owned: string[];
+  selectedCategory: string | null;
+  deck: string[];
+};
+
+export const SHOP_STORAGE_VERSION = 3;
 export const SHOP_STORAGE_KEY = "bustergochi.shop.v1";
 
 export async function readShopStorage(): Promise<ShopPersistedState | null> {
@@ -22,20 +30,35 @@ export async function readShopStorage(): Promise<ShopPersistedState | null> {
   }
 
   try {
-    const stored = await idbGet<ShopPersistedState | ShopPersistedStateV1>(
-      SHOP_STORAGE_KEY,
-    );
+    const stored = await idbGet<
+      ShopPersistedState | ShopPersistedStateV2 | ShopPersistedStateV1
+    >(SHOP_STORAGE_KEY);
     if (stored && stored.version === SHOP_STORAGE_VERSION) {
       return stored;
     }
     if (stored && stored.version === 1) {
-      return { ...stored, version: SHOP_STORAGE_VERSION, deck: [] };
+      return {
+        ...stored,
+        version: SHOP_STORAGE_VERSION,
+        deck: [],
+        decorations: [],
+      };
+    }
+    if (stored && stored.version === 2) {
+      return {
+        ...stored,
+        version: SHOP_STORAGE_VERSION,
+        decorations: [],
+      };
     }
     const raw = window.localStorage.getItem(SHOP_STORAGE_KEY);
     if (!raw) {
       return null;
     }
-    const parsed = JSON.parse(raw) as ShopPersistedState | ShopPersistedStateV1;
+    const parsed = JSON.parse(raw) as
+      | ShopPersistedState
+      | ShopPersistedStateV2
+      | ShopPersistedStateV1;
     if (!parsed) {
       return null;
     }
@@ -48,6 +71,16 @@ export async function readShopStorage(): Promise<ShopPersistedState | null> {
         ...parsed,
         version: SHOP_STORAGE_VERSION,
         deck: [],
+        decorations: [],
+      };
+      void idbSet(SHOP_STORAGE_KEY, migrated);
+      return migrated;
+    }
+    if (parsed.version === 2) {
+      const migrated = {
+        ...parsed,
+        version: SHOP_STORAGE_VERSION,
+        decorations: [],
       };
       void idbSet(SHOP_STORAGE_KEY, migrated);
       return migrated;
