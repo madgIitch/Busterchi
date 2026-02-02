@@ -121,8 +121,8 @@ export const DECORATION_OVERRIDES: Record<string, DecorationSlot> = {};
 
 export const VINYL_SHELF_SLOTS: Record<string, DecorationSlot> = {
   "muebles/Estantería Madera.png": {
-    leftPct: 16.5,
-    topPct: 28.5,
+    leftPct: 19.5,
+    topPct: 32,
     widthPct: 18,
     heightPct: 18,
     widthPx: 37,
@@ -131,8 +131,8 @@ export const VINYL_SHELF_SLOTS: Record<string, DecorationSlot> = {
     stackOffset: { x: 10, y: 8 },
   },
   "muebles/Estantería Madera Premium.png": {
-    leftPct: 18,
-    topPct: 30,
+    leftPct: 21,
+    topPct: 33,
     widthPct: 18,
     heightPct: 18,
     widthPx: 37,
@@ -141,13 +141,46 @@ export const VINYL_SHELF_SLOTS: Record<string, DecorationSlot> = {
     stackOffset: { x: 10, y: 8 },
   },
   "muebles/Estantería Moderna.png": {
-    leftPct: 17,
-    topPct: 28,
+    leftPct: 19.5,
+    topPct: 31,
     widthPct: 18,
     heightPct: 18,
     widthPx: 37,
     heightPx: 37,
     zIndex: 4,
     stackOffset: { x: 10, y: 8 },
+  },
+};
+
+export const FURNITURE_TYPE_SLOTS: Record<string, DecorationSlot> = {
+  estanteria: {
+    leftPct: 25,
+    topPct: 38,
+    widthPct: 40,
+    heightPct: 42,
+    widthPx: 252,
+    heightPx: 403,
+    zIndex: 1,
+    stackOffset: { x: -8, y: 6 },
+  },
+  mesa: {
+    leftPct: 20,
+    topPct: 83,
+    widthPct: 38,
+    heightPct: 34,
+    widthPx: 406,
+    heightPx: 190,
+    zIndex: 8,
+    stackOffset: { x: -8, y: 6 },
+  },
+  sillon: {
+    leftPct: 21.5,
+    topPct: 68,
+    widthPct: 34,
+    heightPct: 34,
+    widthPx: 615,
+    heightPx: 308,
+    zIndex: 6,
+    stackOffset: { x: -8, y: 6 },
   },
 };

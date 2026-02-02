@@ -4,6 +4,7 @@ import {
   DECORATION_OVERRIDES,
   DECORATION_SLOTS,
   DEFAULT_DECORATION_SLOT,
+  FURNITURE_TYPE_SLOTS,
   VINYL_SHELF_SLOTS,
 } from "@/lib/decorations/layout";
 import { useShopStore } from "@/store/useShopStore";
@@ -38,23 +39,45 @@ export default function PetScene({ isSleeping }: { isSleeping: boolean }) {
     return () => observer.disconnect();
   }, []);
 
-  const activeFurnitureId = [...decorations]
+  const activeShelfId = [...decorations]
     .reverse()
-    .find((itemId) => itemId.startsWith("muebles/"));
+    .find((itemId) => {
+      if (!itemId.startsWith("muebles/")) {
+        return false;
+      }
+      const name = itemId.split("/").pop() ?? "";
+      return name.toLowerCase().startsWith("estanter");
+    });
 
   const placedDecorations = decorations
     .map((itemId, index) => {
     const category = itemId.split("/")[0] ?? "";
-    if (category === "vinilos" && !activeFurnitureId) {
+    if (category === "vinilos" && !activeShelfId) {
       return null;
     }
+    const furnitureName = itemId.split("/").pop() ?? itemId;
+    const lowerFurnitureName = furnitureName.toLowerCase();
+    let furnitureType: "estanteria" | "mesa" | "sillon" | null = null;
+    if (category === "muebles") {
+      if (lowerFurnitureName.startsWith("estanter")) {
+        furnitureType = "estanteria";
+      } else if (lowerFurnitureName.startsWith("mesa")) {
+        furnitureType = "mesa";
+      } else if (lowerFurnitureName.startsWith("sillon")) {
+        furnitureType = "sillon";
+      }
+    }
     const vinylSlot =
-      category === "vinilos" && activeFurnitureId
-        ? VINYL_SHELF_SLOTS[activeFurnitureId]
+      category === "vinilos" && activeShelfId
+        ? VINYL_SHELF_SLOTS[activeShelfId]
         : undefined;
+    const furnitureSlot = furnitureType
+      ? FURNITURE_TYPE_SLOTS[furnitureType]
+      : undefined;
     const slot =
       DECORATION_OVERRIDES[itemId] ??
       vinylSlot ??
+      furnitureSlot ??
       DECORATION_SLOTS[category] ??
       DEFAULT_DECORATION_SLOT;
     const offset = slot.stackOffset ?? { x: 0, y: 0 };

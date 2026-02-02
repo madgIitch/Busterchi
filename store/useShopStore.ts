@@ -68,6 +68,39 @@ export const useShopStore = create<ShopStore>((set) => ({
           decorations: [...withoutFlags, itemId],
         };
       }
+      if (category === "muebles") {
+        const name = itemId.split("/").pop() ?? itemId;
+        const lowerName = name.toLowerCase();
+        let furnitureType = "otros";
+        if (lowerName.startsWith("sillon")) {
+          furnitureType = "sillon";
+        } else if (lowerName.startsWith("mesa")) {
+          furnitureType = "mesa";
+        } else if (lowerName.startsWith("estanter")) {
+          furnitureType = "estanteria";
+        }
+        const withoutSameType = state.decorations.filter((id) => {
+          if (!id.startsWith("muebles/")) {
+            return true;
+          }
+          const otherName = id.split("/").pop() ?? id;
+          const otherLower = otherName.toLowerCase();
+          if (furnitureType === "sillon") {
+            return !otherLower.startsWith("sillon");
+          }
+          if (furnitureType === "mesa") {
+            return !otherLower.startsWith("mesa");
+          }
+          if (furnitureType === "estanteria") {
+            return !otherLower.startsWith("estanter");
+          }
+          return otherLower === lowerName;
+        });
+        return {
+          ...state,
+          decorations: [...withoutSameType, itemId],
+        };
+      }
       return { ...state, decorations: [...state.decorations, itemId] };
     }),
   rehydrate: async () => {
