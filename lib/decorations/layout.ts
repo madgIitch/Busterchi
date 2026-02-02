@@ -36,15 +36,17 @@ export const DECORATION_SLOTS: Record<string, DecorationSlot> = {
     stackOffset: { x: -8, y: 6 },
   },
   carteles: {
-    leftPct: 30,
-    topPct: 20,
+    leftPct: 82.5,
+    topPct: 25,
     widthPct: 28,
     heightPct: 28,
-    zIndex: 12,
+    widthPx : 237,
+    heightPx: 237,
+    zIndex: 1,
     stackOffset: { x: 8, y: 6 },
   },
   banderas: {
-    leftPct: 82.5,
+    leftPct: 81,
     topPct: 23,
     widthPct: 24,
     heightPct: 22,
@@ -54,11 +56,13 @@ export const DECORATION_SLOTS: Record<string, DecorationSlot> = {
     stackOffset: { x: 10, y: 6 },
   },
   vinilos: {
-    leftPct: 28,
-    topPct: 36,
+    leftPct: 16,
+    topPct: 27.5,
     widthPct: 18,
     heightPct: 18,
-    zIndex: 13,
+    widthPx: 37,
+    heightPx: 37,
+    zIndex: 4,
     stackOffset: { x: 10, y: 8 },
   },
   iluminacion: {
@@ -70,11 +74,13 @@ export const DECORATION_SLOTS: Record<string, DecorationSlot> = {
     stackOffset: { x: -6, y: 8 },
   },
   muebles: {
-    leftPct: 65,
-    topPct: 62,
+    leftPct: 25,
+    topPct: 36,
     widthPct: 40,
     heightPct: 42,
-    zIndex: 25,
+    widthPx: 252,
+    heightPx: 403,
+    zIndex: 1,
     stackOffset: { x: -8, y: 6 },
   },
   camas: {
@@ -112,3 +118,36 @@ export const DECORATION_SLOTS: Record<string, DecorationSlot> = {
 };
 
 export const DECORATION_OVERRIDES: Record<string, DecorationSlot> = {};
+
+export const VINYL_SHELF_SLOTS: Record<string, DecorationSlot> = {
+  "muebles/Estantería Madera.png": {
+    leftPct: 16.5,
+    topPct: 28.5,
+    widthPct: 18,
+    heightPct: 18,
+    widthPx: 37,
+    heightPx: 37,
+    zIndex: 4,
+    stackOffset: { x: 10, y: 8 },
+  },
+  "muebles/Estantería Madera Premium.png": {
+    leftPct: 18,
+    topPct: 30,
+    widthPct: 18,
+    heightPct: 18,
+    widthPx: 37,
+    heightPx: 37,
+    zIndex: 4,
+    stackOffset: { x: 10, y: 8 },
+  },
+  "muebles/Estantería Moderna.png": {
+    leftPct: 17,
+    topPct: 28,
+    widthPct: 18,
+    heightPct: 18,
+    widthPx: 37,
+    heightPx: 37,
+    zIndex: 4,
+    stackOffset: { x: 10, y: 8 },
+  },
+};

@@ -4,6 +4,7 @@ import {
   DECORATION_OVERRIDES,
   DECORATION_SLOTS,
   DEFAULT_DECORATION_SLOT,
+  VINYL_SHELF_SLOTS,
 } from "@/lib/decorations/layout";
 import { useShopStore } from "@/store/useShopStore";
 
@@ -37,10 +38,23 @@ export default function PetScene({ isSleeping }: { isSleeping: boolean }) {
     return () => observer.disconnect();
   }, []);
 
-  const placedDecorations = decorations.map((itemId, index) => {
+  const activeFurnitureId = [...decorations]
+    .reverse()
+    .find((itemId) => itemId.startsWith("muebles/"));
+
+  const placedDecorations = decorations
+    .map((itemId, index) => {
     const category = itemId.split("/")[0] ?? "";
+    if (category === "vinilos" && !activeFurnitureId) {
+      return null;
+    }
+    const vinylSlot =
+      category === "vinilos" && activeFurnitureId
+        ? VINYL_SHELF_SLOTS[activeFurnitureId]
+        : undefined;
     const slot =
       DECORATION_OVERRIDES[itemId] ??
+      vinylSlot ??
       DECORATION_SLOTS[category] ??
       DEFAULT_DECORATION_SLOT;
     const offset = slot.stackOffset ?? { x: 0, y: 0 };
@@ -50,13 +64,18 @@ export default function PetScene({ isSleeping }: { isSleeping: boolean }) {
     const top = `calc(${slot.topPct}% + ${offset.y * index * sceneScale}px)`;
     return {
       itemId,
+      category,
       left,
       top,
       zIndex: slot.zIndex + index,
       widthPx: slot.widthPx ? slot.widthPx * sceneScale : undefined,
       heightPx: slot.heightPx ? slot.heightPx * sceneScale : undefined,
     };
-  });
+  })
+    .filter(
+      (decoration): decoration is NonNullable<typeof decoration> =>
+        Boolean(decoration),
+    );
 
   return (
     <section className="w-full rounded-3xl bg-surface p-4 shadow-lg shadow-black/10 sm:p-6">
@@ -73,6 +92,11 @@ export default function PetScene({ isSleeping }: { isSleeping: boolean }) {
           sizes="(max-width: 768px) 100vw, 420px"
         />
         {placedDecorations.map((decoration) => (
+          (() => {
+            const useAutoFit = Boolean(
+              decoration.widthPx || decoration.heightPx,
+            );
+            return (
           <img
             key={decoration.itemId}
             src={`/store/${decoration.itemId}`}
@@ -82,11 +106,30 @@ export default function PetScene({ isSleeping }: { isSleeping: boolean }) {
               left: decoration.left,
               top: decoration.top,
               transform: "translate(-50%, -50%)",
-              width: decoration.widthPx ? `${decoration.widthPx}px` : undefined,
-              height: decoration.heightPx ? `${decoration.heightPx}px` : undefined,
+              width: useAutoFit
+                ? "auto"
+                : decoration.widthPx
+                  ? `${decoration.widthPx}px`
+                  : undefined,
+              height: useAutoFit
+                ? "auto"
+                : decoration.heightPx
+                  ? `${decoration.heightPx}px`
+                  : undefined,
+              maxWidth:
+                useAutoFit && decoration.widthPx
+                  ? `${decoration.widthPx}px`
+                  : undefined,
+              maxHeight:
+                useAutoFit && decoration.heightPx
+                  ? `${decoration.heightPx}px`
+                  : undefined,
+              objectFit: useAutoFit ? "contain" : undefined,
               zIndex: decoration.zIndex,
             }}
           />
+            );
+          })()
         ))}
         <Image
           src={petImage}

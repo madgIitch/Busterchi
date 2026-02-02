@@ -149,7 +149,7 @@ export default function InventoryModal() {
           </button>
         </header>
 
-        <section className="h-[calc(100svh-56px)] overflow-y-auto p-4">
+        <section className="max-h-[calc(100svh-56px)] overflow-y-auto p-4">
           <div className="mb-4 flex items-center gap-2">
             <button
               type="button"

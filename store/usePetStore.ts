@@ -62,6 +62,7 @@ const clampStat = (value: number) => Math.max(0, Math.min(100, value));
 
 const getTodayKey = () => new Date().toISOString().slice(0, 10);
 const isDev = process.env.NODE_ENV === "development";
+const DEV_BUCKSTERS = 999;
 
 export const usePetStore = create<PetStore>((set) => ({
   ...defaultStats,
@@ -71,7 +72,7 @@ export const usePetStore = create<PetStore>((set) => ({
   lastCheckInDate: null,
   isSleeping: false,
   sleepUntil: 0,
-  bucksters: 0,
+  bucksters: isDev ? DEV_BUCKSTERS : 0,
   setStat: (key, value) =>
     set((state) => ({
       ...state,
@@ -178,7 +179,9 @@ export const usePetStore = create<PetStore>((set) => ({
         lastCheckInDate: stored?.lastCheckInDate ?? null,
         isSleeping,
         sleepUntil,
-        bucksters: stored?.bucksters ?? state.bucksters,
+        bucksters: isDev
+          ? DEV_BUCKSTERS
+          : stored?.bucksters ?? state.bucksters,
       };
     });
   },
