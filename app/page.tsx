@@ -146,7 +146,6 @@ export default function Home() {
           : "",
       onClick: () => {
         performAction("walk");
-        setIsWalkGameOpen(true);
       },
     },
     {
