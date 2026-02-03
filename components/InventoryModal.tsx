@@ -5,6 +5,7 @@ import { useState } from "react";
 import { CARD_CATALOG } from "@/lib/encounters/cards";
 import { ENABLE_WALK_GAME } from "@/lib/encounters/config";
 import type { CardDefinition } from "@/lib/encounters/types";
+import { SHOP_CATEGORIES } from "@/lib/shopCatalog";
 import { useShopStore } from "@/store/useShopStore";
 
 function formatNameFromId(id: string) {
@@ -86,11 +87,17 @@ export default function InventoryModal() {
     toggleDecoration,
   } = useShopStore();
   const [activeTab, setActiveTab] = useState<"inventory" | "deck">("inventory");
+  const [inventoryCategory, setInventoryCategory] = useState(
+    SHOP_CATEGORIES[0]?.id ?? "banderas",
+  );
   const isDeckEnabled = ENABLE_WALK_GAME;
   const effectiveTab = isDeckEnabled ? activeTab : "inventory";
   const [isDeckLimitHit, setIsDeckLimitHit] = useState(false);
   const maxDeckSize = 12;
   const catalogById = new Map(CARD_CATALOG.map((card) => [card.id, card]));
+  const ownedInCategory = owned.filter(
+    (id) => id.split("/")[0] === inventoryCategory,
+  );
   const deckCounts = deck.reduce(
     (acc, cardId) => {
       const card = catalogById.get(cardId);
@@ -185,43 +192,61 @@ export default function InventoryModal() {
           </div>
 
           {effectiveTab === "inventory" ? (
-            owned.length === 0 ? (
-              <div className="rounded-2xl bg-background p-4 text-sm text-muted">
-                Inventario vacio.
-              </div>
-            ) : (
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
-                {owned.map((id) => {
-                  const isPlaced = decorations.includes(id);
-                  return (
-                  <div
-                    key={id}
-                    className="rounded-2xl bg-background p-3 shadow-sm shadow-black/10"
+            <div className="space-y-4">
+              <div className="flex flex-wrap items-center gap-2">
+                {SHOP_CATEGORIES.map((category) => (
+                  <button
+                    key={category.id}
+                    type="button"
+                    onClick={() => setInventoryCategory(category.id)}
+                    className={`rounded-full px-3 py-1 text-xs ${
+                      inventoryCategory === category.id
+                        ? "bg-[var(--color-primary)] text-text"
+                        : "bg-background text-muted"
+                    }`}
                   >
-                    <div className="flex h-20 items-center justify-center overflow-hidden rounded-xl bg-white/60">
-                      <Image
-                        src={`/store/${id}`}
-                        alt={formatNameFromId(id)}
-                        width={80}
-                        height={80}
-                        className="max-h-full max-w-full object-contain"
-                      />
-                    </div>
-                    <p className="mt-2 break-words text-xs leading-4">
-                      {formatNameFromId(id)}
-                    </p>
-                    <button
-                      type="button"
-                      onClick={() => toggleDecoration(id)}
-                      className="mt-2 w-full rounded-full bg-surface px-2 py-1 text-[10px] text-text shadow-sm shadow-black/10"
-                    >
-                      {isPlaced ? "Quitar de casa" : "Colocar en casa"}
-                    </button>
-                  </div>
-                );
-                })}
+                    {category.label}
+                  </button>
+                ))}
               </div>
-            )
+              {ownedInCategory.length === 0 ? (
+                <div className="rounded-2xl bg-background p-4 text-sm text-muted">
+                  No tienes items en esta categoria.
+                </div>
+              ) : (
+                <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                  {ownedInCategory.map((id) => {
+                    const isPlaced = decorations.includes(id);
+                    return (
+                      <div
+                        key={id}
+                        className="rounded-2xl bg-background p-3 shadow-sm shadow-black/10"
+                      >
+                        <div className="flex h-20 items-center justify-center overflow-hidden rounded-xl bg-white/60">
+                          <Image
+                            src={`/store/${id}`}
+                            alt={formatNameFromId(id)}
+                            width={80}
+                            height={80}
+                            className="max-h-full max-w-full object-contain"
+                          />
+                        </div>
+                        <p className="mt-2 break-words text-xs leading-4">
+                          {formatNameFromId(id)}
+                        </p>
+                        <button
+                          type="button"
+                          onClick={() => toggleDecoration(id)}
+                          className="mt-2 w-full rounded-full bg-surface px-2 py-1 text-[10px] text-text shadow-sm shadow-black/10"
+                        >
+                          {isPlaced ? "Quitar de casa" : "Colocar en casa"}
+                        </button>
+                      </div>
+                    );
+                  })}
+                </div>
+              )}
+            </div>
           ) : (
             <div className="space-y-3">
               <div className="text-xs text-muted">

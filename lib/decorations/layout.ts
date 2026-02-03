@@ -21,11 +21,13 @@ export const DEFAULT_DECORATION_SLOT: DecorationSlot = {
 export const DECORATION_SLOTS: Record<string, DecorationSlot> = {
   paredes: { leftPct: 50, topPct: 50, widthPct: 100, heightPct: 100, zIndex: 1 },
   alfombras: {
-    leftPct: 50,
-    topPct: 78,
+    leftPct: 20,
+    topPct: 90,
     widthPct: 70,
     heightPct: 38,
-    zIndex: 5,
+    widthPx: 851,
+    heightPx: 273,
+    zIndex: 3,
   },
   ventanas: {
     leftPct: 72,
@@ -36,8 +38,8 @@ export const DECORATION_SLOTS: Record<string, DecorationSlot> = {
     stackOffset: { x: -8, y: 6 },
   },
   carteles: {
-    leftPct: 82.5,
-    topPct: 25,
+    leftPct: 80,
+    topPct: 35,
     widthPct: 28,
     heightPct: 28,
     widthPx : 237,
@@ -46,8 +48,8 @@ export const DECORATION_SLOTS: Record<string, DecorationSlot> = {
     stackOffset: { x: 8, y: 6 },
   },
   banderas: {
-    leftPct: 81,
-    topPct: 23,
+    leftPct: 79.5,
+    topPct: 16,
     widthPct: 24,
     heightPct: 22,
     widthPx: 285,
@@ -80,7 +82,7 @@ export const DECORATION_SLOTS: Record<string, DecorationSlot> = {
     heightPct: 42,
     widthPx: 252,
     heightPx: 403,
-    zIndex: 1,
+    zIndex: 8,
     stackOffset: { x: -8, y: 6 },
   },
   camas: {
@@ -170,7 +172,7 @@ export const FURNITURE_TYPE_SLOTS: Record<string, DecorationSlot> = {
     heightPct: 34,
     widthPx: 406,
     heightPx: 190,
-    zIndex: 8,
+    zIndex: 9,
     stackOffset: { x: -8, y: 6 },
   },
   sillon: {

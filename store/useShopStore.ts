@@ -68,6 +68,24 @@ export const useShopStore = create<ShopStore>((set) => ({
           decorations: [...withoutFlags, itemId],
         };
       }
+      if (category === "alfombras") {
+        const withoutRugs = state.decorations.filter(
+          (id) => !id.startsWith("alfombras/"),
+        );
+        return {
+          ...state,
+          decorations: [...withoutRugs, itemId],
+        };
+      }
+      if (category === "carteles") {
+        const withoutPosters = state.decorations.filter(
+          (id) => !id.startsWith("carteles/"),
+        );
+        return {
+          ...state,
+          decorations: [...withoutPosters, itemId],
+        };
+      }
       if (category === "muebles") {
         const name = itemId.split("/").pop() ?? itemId;
         const lowerName = name.toLowerCase();
@@ -108,11 +126,12 @@ export const useShopStore = create<ShopStore>((set) => ({
     if (!stored) {
       return;
     }
+    const normalizeItemId = (id: string) => id.replace(/\.png\.png$/i, ".png");
     set({
-      owned: stored.owned ?? [],
+      owned: (stored.owned ?? []).map(normalizeItemId),
       selectedCategory: stored.selectedCategory ?? defaultCategory,
       deck: stored.deck ?? [],
-      decorations: stored.decorations ?? [],
+      decorations: (stored.decorations ?? []).map(normalizeItemId),
     });
   },
 }));
