@@ -94,6 +94,8 @@ export default function PetScene({ isSleeping }: { isSleeping: boolean }) {
       left,
       top,
       zIndex: slot.zIndex + index,
+      widthPct: slot.widthPct,
+      heightPct: slot.heightPct,
       widthPx: slot.widthPx ? slot.widthPx * sceneScale : undefined,
       heightPx: slot.heightPx ? slot.heightPx * sceneScale : undefined,
     };
@@ -116,7 +118,7 @@ export default function PetScene({ isSleeping }: { isSleeping: boolean }) {
               alt=""
               fill
               priority
-              className="object-cover"
+              className="z-0 object-cover"
               sizes="(max-width: 768px) 100vw, 420px"
             />
             <Image
@@ -124,7 +126,7 @@ export default function PetScene({ isSleeping }: { isSleeping: boolean }) {
               alt=""
               fill
               priority
-              className="object-cover"
+              className="z-10 object-cover"
               sizes="(max-width: 768px) 100vw, 420px"
             />
           </>
@@ -157,12 +159,12 @@ export default function PetScene({ isSleeping }: { isSleeping: boolean }) {
                 ? "auto"
                 : decoration.widthPx
                   ? `${decoration.widthPx}px`
-                  : undefined,
+                  : `${decoration.widthPct}%`,
               height: useAutoFit
                 ? "auto"
                 : decoration.heightPx
                   ? `${decoration.heightPx}px`
-                  : undefined,
+                  : `${decoration.heightPct}%`,
               maxWidth:
                 useAutoFit && decoration.widthPx
                   ? `${decoration.widthPx}px`
