@@ -30,9 +30,9 @@ export const DECORATION_SLOTS: Record<string, DecorationSlot> = {
     zIndex: 3,
   },
   ventanas: {
-    leftPct: 72,
+    leftPct: 26.5,
     topPct: 22,
-    widthPct: 28,
+    widthPct: 41,
     heightPct: 38,
     zIndex: 10,
     stackOffset: { x: -8, y: 6 },

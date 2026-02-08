@@ -109,7 +109,7 @@ export default function PetScene({ isSleeping }: { isSleeping: boolean }) {
     <section className="w-full rounded-3xl bg-surface p-4 shadow-lg shadow-black/10 sm:p-6">
       <div
         ref={sceneRef}
-        className="relative w-full aspect-[3/2] overflow-hidden rounded-2xl bg-background/60"
+        className="relative w-full aspect-4/3 sm:aspect-3/2 overflow-hidden rounded-2xl bg-background/60"
       >
         {hasWindowEquipped ? (
           <>
@@ -119,7 +119,7 @@ export default function PetScene({ isSleeping }: { isSleeping: boolean }) {
               fill
               priority
               className="z-0 object-cover"
-              sizes="(max-width: 768px) 100vw, 420px"
+              sizes="(max-width: 640px) 95vw, 420px"
             />
             <Image
               src="/scenes/houseConVentana.png"
@@ -127,7 +127,7 @@ export default function PetScene({ isSleeping }: { isSleeping: boolean }) {
               fill
               priority
               className="z-10 object-cover"
-              sizes="(max-width: 768px) 100vw, 420px"
+              sizes="(max-width: 640px) 95vw, 420px"
             />
           </>
         ) : (
