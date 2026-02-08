@@ -216,7 +216,7 @@ export default function PetScene({ isSleeping }: { isSleeping: boolean }) {
           width={110}
           height={90}
           priority
-          className="absolute left-[60%] top-[80%] h-auto w-[clamp(90px,28vw,130px)] -translate-x-1/2 -translate-y-1/2 idle-float"
+          className="absolute left-[60%] top-[80%] z-25 h-auto w-[clamp(90px,28vw,130px)] -translate-x-1/2 -translate-y-1/2 idle-float"
         />
       </div>
     </section>
