@@ -9,15 +9,42 @@ import {
 } from "@/lib/decorations/layout";
 import { useShopStore } from "@/store/useShopStore";
 
+function getBackgroundByTime(): string {
+  const hour = new Date().getHours();
+
+  if (hour >= 5 && hour < 8) {
+    return "/scenes/fondoSalon/fondoAmanecer.png"; // 5am-8am
+  } else if (hour >= 8 && hour < 12) {
+    return "/scenes/fondoSalon/fondoMañana.png"; // 8am-12pm
+  } else if (hour >= 12 && hour < 18) {
+    return "/scenes/fondoSalon/fondoTarde.png"; // 12pm-6pm
+  } else if (hour >= 18 && hour < 20) {
+    return "/scenes/fondoSalon/fondoAtardecer.png"; // 6pm-8pm
+  } else {
+    return "/scenes/fondoSalon/fondoNoche.png"; // 8pm-5am
+  }
+}
+
 export default function PetScene({ isSleeping }: { isSleeping: boolean }) {
   const petImage = isSleeping ? "/pet/buster_sleep.png" : "/pet/buster_idle.png";
   const altText = isSleeping ? "Buster sleeping" : "Buster idle";
   const decorations = useShopStore((state) => state.decorations);
   const sceneRef = useRef<HTMLDivElement | null>(null);
   const [sceneScale, setSceneScale] = useState(1);
+  const [backgroundImage, setBackgroundImage] = useState(getBackgroundByTime());
   const hasWindowEquipped = decorations.some((itemId) =>
     itemId.startsWith("ventanas/"),
   );
+
+  useEffect(() => {
+    const updateBackground = () => {
+      setBackgroundImage(getBackgroundByTime());
+    };
+
+    const checkInterval = setInterval(updateBackground, 60000);
+
+    return () => clearInterval(checkInterval);
+  }, []);
 
   useEffect(() => {
     const node = sceneRef.current;
@@ -114,11 +141,11 @@ export default function PetScene({ isSleeping }: { isSleeping: boolean }) {
         {hasWindowEquipped ? (
           <>
             <Image
-              src="/scenes/fondoSalon/fondoAmanecer.png"
+              src={backgroundImage}
               alt=""
               fill
               priority
-              className="z-0 object-cover"
+              className="z-0 object-contain object-top"
               sizes="(max-width: 640px) 95vw, 420px"
             />
             <Image
