@@ -47,4 +47,9 @@
   "muebles/Sillon medio.png": 18,
   "muebles/Sillon premium.png": 24,
 
+  // Ventanas
+  "ventanas/Ventana de Cristal.png": 16,
+  "ventanas/Ventana de Madera.png": 14,
+  "ventanas/Ventana de Metal.png": 18,
+  "ventanas/Ventana de Roble.png": 20,
 };
