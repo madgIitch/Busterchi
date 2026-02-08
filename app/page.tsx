@@ -177,7 +177,7 @@ export default function Home() {
   ];
 
   return (
-    <div className="h-[100svh] bg-background px-3 py-3 text-text sm:px-6 sm:py-6">
+    <div className="h-svh bg-background px-3 py-3 text-text sm:px-6 sm:py-6">
       <main className="fit-screen mx-auto flex h-full w-full max-w-md flex-col justify-between gap-2 sm:gap-4">
         <header className="flex items-center justify-between">
           <div>
