@@ -15,6 +15,9 @@ export default function PetScene({ isSleeping }: { isSleeping: boolean }) {
   const decorations = useShopStore((state) => state.decorations);
   const sceneRef = useRef<HTMLDivElement | null>(null);
   const [sceneScale, setSceneScale] = useState(1);
+  const hasWindowEquipped = decorations.some((itemId) =>
+    itemId.startsWith("ventanas/"),
+  );
 
   useEffect(() => {
     const node = sceneRef.current;
@@ -106,14 +109,35 @@ export default function PetScene({ isSleeping }: { isSleeping: boolean }) {
         ref={sceneRef}
         className="relative w-full aspect-[3/2] overflow-hidden rounded-2xl bg-background/60"
       >
-        <Image
-          src="/scenes/hoseplaceholder.png"
-          alt=""
-          fill
-          priority
-          className="object-cover"
-          sizes="(max-width: 768px) 100vw, 420px"
-        />
+        {hasWindowEquipped ? (
+          <>
+            <Image
+              src="/scenes/fondoSalon/fondoAmanecer.png"
+              alt=""
+              fill
+              priority
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 420px"
+            />
+            <Image
+              src="/scenes/houseConVentana.png"
+              alt=""
+              fill
+              priority
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 420px"
+            />
+          </>
+        ) : (
+          <Image
+            src="/scenes/hoseplaceholder.png"
+            alt=""
+            fill
+            priority
+            className="object-cover"
+            sizes="(max-width: 768px) 100vw, 420px"
+          />
+        )}
         {placedDecorations.map((decoration) => (
           (() => {
             const useAutoFit = Boolean(

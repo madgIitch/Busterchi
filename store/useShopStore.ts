@@ -39,11 +39,26 @@ export const useShopStore = create<ShopStore>((set) => ({
   closeInventory: () => set({ isInventoryOpen: false }),
   selectCategory: (categoryId) => set({ selectedCategory: categoryId }),
   purchaseItem: (itemId) =>
-    set((state) =>
-      state.owned.includes(itemId)
-        ? state
-        : { ...state, owned: [...state.owned, itemId] },
-    ),
+    set((state) => {
+      if (state.owned.includes(itemId)) {
+        return state;
+      }
+      const nextOwned = [...state.owned, itemId];
+      const category = itemId.split("/")[0] ?? "";
+      if (category === "ventanas") {
+        const hasWindowEquipped = state.decorations.some((id) =>
+          id.startsWith("ventanas/"),
+        );
+        if (!hasWindowEquipped) {
+          return {
+            ...state,
+            owned: nextOwned,
+            decorations: [...state.decorations, itemId],
+          };
+        }
+      }
+      return { ...state, owned: nextOwned };
+    }),
   toggleDeckCard: (cardId) =>
     set((state) =>
       state.deck.includes(cardId)
@@ -84,6 +99,18 @@ export const useShopStore = create<ShopStore>((set) => ({
         return {
           ...state,
           decorations: [...withoutPosters, itemId],
+        };
+      }
+      if (category === "ventanas") {
+        if (state.decorations.includes(itemId)) {
+          return state;
+        }
+        const withoutWindows = state.decorations.filter(
+          (id) => !id.startsWith("ventanas/"),
+        );
+        return {
+          ...state,
+          decorations: [...withoutWindows, itemId],
         };
       }
       if (category === "muebles") {
