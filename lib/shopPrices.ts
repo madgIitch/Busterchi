@@ -31,9 +31,11 @@
   "alfombras/Alfombra con flores.png": 9,
   "alfombras/Alfombra rosita.png": 8,
   "alfombras/Alfombra verdecita.png": 8,
-  "alfombras/Alfomrriña.png": 7,
+  "alfombras/Alfomrriña.png": 72,
   "alfombras/Huella Violeta.png": 10,
   "alfombras/Huella.png": 9,
+  "alfombras/Betis.png": 30,
+  "alfombras/Athletic.png": 25,
 
   // Muebles
   "muebles/Estantería Madera Premium.png": 22,

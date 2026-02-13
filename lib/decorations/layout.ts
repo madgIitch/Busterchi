@@ -224,6 +224,23 @@ export const HABITACION_DECORATION_SLOTS: Record<string, DecorationSlot> = {
 
 export const DECORATION_OVERRIDES: Record<string, DecorationSlot> = {};
 
+export const HABITACION_DECORATION_OVERRIDES: Record<string, DecorationSlot> = {
+  "alfombras/Betis.png": {
+    leftPct: 18,
+    topPct: 88,
+    widthPct: 13,
+    heightPct: 13,
+    zIndex: 5,
+  },
+  "alfombras/Athletic.png": {
+    leftPct: 80,
+    topPct: 88,
+    widthPct: 13,
+    heightPct: 13,
+    zIndex: 5,
+  },
+};
+
 export const VINYL_SHELF_SLOTS: Record<string, DecorationSlot> = {
   "muebles/Estantería Madera.png": {
     leftPct: 19.5,
@@ -354,7 +371,7 @@ export const HABITACION_FURNITURE_TYPE_SLOTS: Record<string, DecorationSlot> = {
     stackOffset: { x: -6, y: 5 },
   },
   mesa: {
-    leftPct: 58,
+    leftPct: 50,
     topPct: 84,
     widthPct: 36,
     heightPct: 30,

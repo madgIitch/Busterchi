@@ -6,6 +6,7 @@ import {
   DEFAULT_DECORATION_SLOT,
   FURNITURE_TYPE_SLOTS,
   HABITACION_DECORATION_SLOTS,
+  HABITACION_DECORATION_OVERRIDES,
   HABITACION_FURNITURE_TYPE_SLOTS,
   HABITACION_VINYL_GRID_LAYOUTS,
   HABITACION_VINYL_SHELF_SLOTS,
@@ -132,6 +133,13 @@ export default function PetScene({ isSleeping }: { isSleeping: boolean }) {
     }
     const furnitureName = itemId.split("/").pop() ?? itemId;
     const lowerFurnitureName = furnitureName.toLowerCase();
+    const isRoomOnlyRug =
+      category === "alfombras" &&
+      (lowerFurnitureName.includes("betis") ||
+        lowerFurnitureName.includes("athletic"));
+    if (activeScene === "salon" && isRoomOnlyRug) {
+      return null;
+    }
     if (activeScene === "salon" && category === "vinilos") {
       return null;
     }
@@ -169,7 +177,12 @@ export default function PetScene({ isSleeping }: { isSleeping: boolean }) {
     const furnitureSlot = furnitureType
       ? sceneFurnitureTypeSlots[furnitureType]
       : undefined;
+    const sceneOverride =
+      activeScene === "habitacion"
+        ? HABITACION_DECORATION_OVERRIDES[itemId]
+        : undefined;
     const slot =
+      sceneOverride ??
       DECORATION_OVERRIDES[itemId] ??
       vinylSlot ??
       furnitureSlot ??

@@ -85,9 +85,21 @@ export const useShopStore = create<ShopStore>((set) => ({
         };
       }
       if (category === "alfombras") {
-        const withoutRugs = state.decorations.filter(
-          (id) => !id.startsWith("alfombras/"),
-        );
+        const isSpecialRug =
+          itemId === "alfombras/Betis.png" ||
+          itemId === "alfombras/Athletic.png";
+        if (isSpecialRug) {
+          return {
+            ...state,
+            decorations: [...state.decorations, itemId],
+          };
+        }
+        const withoutRugs = state.decorations.filter((id) => {
+          if (!id.startsWith("alfombras/")) {
+            return true;
+          }
+          return id === "alfombras/Betis.png" || id === "alfombras/Athletic.png";
+        });
         return {
           ...state,
           decorations: [...withoutRugs, itemId],
