@@ -45,8 +45,8 @@ export const DECORATION_SLOTS: Record<string, DecorationSlot> = {
     stackOffset: { x: -8, y: 6 },
   },
   carteles: {
-    leftPct: 82,
-    topPct: 37,
+    leftPct: 75,
+    topPct: 32,
     widthPct: 28,
     heightPct: 28,
     widthPx : 237,
