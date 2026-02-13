@@ -311,7 +311,7 @@ export default function PetScene({ isSleeping }: { isSleeping: boolean }) {
           className={`absolute z-25 h-auto -translate-x-1/2 -translate-y-1/2 idle-float ${
             activeScene === "habitacion"
               ? "left-[68%] top-[80%] w-[clamp(72px,22vw,105px)]"
-              : "left-[60%] top-[80%] w-[clamp(90px,28vw,130px)]"
+              : "left-[60%] top-[80%] w-[clamp(72px,22vw,105px)]"
           }`}
         />
         </div>
