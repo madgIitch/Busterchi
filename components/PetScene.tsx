@@ -7,6 +7,7 @@ import {
   FURNITURE_TYPE_SLOTS,
   HABITACION_DECORATION_SLOTS,
   HABITACION_FURNITURE_TYPE_SLOTS,
+  HABITACION_VINYL_GRID_LAYOUTS,
   HABITACION_VINYL_SHELF_SLOTS,
   VINYL_SHELF_SLOTS,
 } from "@/lib/decorations/layout";
@@ -53,6 +54,10 @@ export default function PetScene({ isSleeping }: { isSleeping: boolean }) {
     activeScene === "habitacion"
       ? HABITACION_FURNITURE_TYPE_SLOTS
       : FURNITURE_TYPE_SLOTS;
+  const vinylPositionByItemId = new Map<
+    string,
+    { leftPct: number; topPct: number }
+  >();
 
   useEffect(() => {
     const updateBackground = () => {
@@ -97,17 +102,56 @@ export default function PetScene({ isSleeping }: { isSleeping: boolean }) {
       return name.toLowerCase().startsWith("estanter");
     });
 
+  if (activeScene === "habitacion" && activeShelfId) {
+    const shelfGrid = HABITACION_VINYL_GRID_LAYOUTS[activeShelfId];
+    if (shelfGrid) {
+      const vinylItemIds = decorations.filter((itemId) =>
+        itemId.startsWith("vinilos/"),
+      );
+
+      vinylItemIds.slice(0, shelfGrid.maxVinyls).forEach((vinylItemId, i) => {
+        const row = Math.floor(i / 2);
+        const isLeftColumn = i % 2 === 0;
+        const leftPct = isLeftColumn
+          ? shelfGrid.leftColumn.leftPct
+          : shelfGrid.rightColumn.leftPct;
+        const topBasePct = shelfGrid.leftColumn.topPct;
+        vinylPositionByItemId.set(vinylItemId, {
+          leftPct,
+          topPct: topBasePct + row * shelfGrid.topOffset,
+        });
+      });
+    }
+  }
+
   const placedDecorations = decorations
     .map((itemId, index) => {
     const category = itemId.split("/")[0] ?? "";
     if (activeScene === "habitacion" && category === "ventanas") {
       return null;
     }
+    const furnitureName = itemId.split("/").pop() ?? itemId;
+    const lowerFurnitureName = furnitureName.toLowerCase();
+    if (activeScene === "salon" && category === "vinilos") {
+      return null;
+    }
+    if (
+      activeScene === "salon" &&
+      category === "muebles" &&
+      lowerFurnitureName.startsWith("estanter")
+    ) {
+      return null;
+    }
     if (category === "vinilos" && !activeShelfId) {
       return null;
     }
-    const furnitureName = itemId.split("/").pop() ?? itemId;
-    const lowerFurnitureName = furnitureName.toLowerCase();
+    if (
+      activeScene === "habitacion" &&
+      category === "vinilos" &&
+      !vinylPositionByItemId.has(itemId)
+    ) {
+      return null;
+    }
     let furnitureType: "estanteria" | "mesa" | "sillon" | null = null;
     if (category === "muebles") {
       if (lowerFurnitureName.startsWith("estanter")) {
@@ -131,15 +175,17 @@ export default function PetScene({ isSleeping }: { isSleeping: boolean }) {
       furnitureSlot ??
       sceneSlots[category] ??
       DEFAULT_DECORATION_SLOT;
-    const offset = slot.stackOffset ?? { x: 0, y: 0 };
-    const left = `calc(${slot.leftPct}% + ${
-      offset.x * index * sceneScale
-    }px)`;
-    const top = `calc(${slot.topPct}% + ${offset.y * index * sceneScale}px)`;
+    const vinylPosition = vinylPositionByItemId.get(itemId);
+    const offset = vinylPosition
+      ? { x: 0, y: 0 }
+      : (slot.stackOffset ?? { x: 0, y: 0 });
+    const leftPct = vinylPosition ? vinylPosition.leftPct : slot.leftPct;
+    const topPct = vinylPosition ? vinylPosition.topPct : slot.topPct;
+    const top = `calc(${topPct}% + ${offset.y * index * sceneScale}px)`;
     return {
       itemId,
       category,
-      left,
+      left: `calc(${leftPct}% + ${offset.x * index * sceneScale}px)`,
       top,
       zIndex: slot.zIndex + index,
       widthPct: slot.widthPct,
@@ -249,10 +295,10 @@ export default function PetScene({ isSleeping }: { isSleeping: boolean }) {
           width={110}
           height={90}
           priority
-          className={`absolute z-25 h-auto w-[clamp(90px,28vw,130px)] -translate-x-1/2 -translate-y-1/2 idle-float ${
+          className={`absolute z-25 h-auto -translate-x-1/2 -translate-y-1/2 idle-float ${
             activeScene === "habitacion"
-              ? "left-[68%] top-[80%]"
-              : "left-[60%] top-[80%]"
+              ? "left-[68%] top-[80%] w-[clamp(72px,22vw,105px)]"
+              : "left-[60%] top-[80%] w-[clamp(90px,28vw,130px)]"
           }`}
         />
         </div>

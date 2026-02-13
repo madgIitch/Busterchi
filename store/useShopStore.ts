@@ -142,6 +142,18 @@ export const useShopStore = create<ShopStore>((set) => ({
           }
           return otherLower === lowerName;
         });
+        if (furnitureType === "estanteria") {
+          const activeVinyls = state.decorations.filter((id) =>
+            id.startsWith("vinilos/"),
+          );
+          const withoutVinyls = withoutSameType.filter(
+            (id) => !id.startsWith("vinilos/"),
+          );
+          return {
+            ...state,
+            decorations: [...withoutVinyls, itemId, ...activeVinyls],
+          };
+        }
         return {
           ...state,
           decorations: [...withoutSameType, itemId],

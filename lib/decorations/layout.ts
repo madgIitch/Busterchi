@@ -9,6 +9,13 @@ export type DecorationSlot = {
   stackOffset?: { x: number; y: number };
 };
 
+export type VinylShelfGridConfig = {
+  maxVinyls: number;
+  leftColumn: { leftPct: number; topPct: number };
+  rightColumn: { leftPct: number; topPct: number };
+  topOffset: number;
+};
+
 export const DEFAULT_DECORATION_SLOT: DecorationSlot = {
   leftPct: 50,
   topPct: 65,
@@ -64,7 +71,7 @@ export const DECORATION_SLOTS: Record<string, DecorationSlot> = {
     heightPct: 18,
     widthPx: 37,
     heightPx: 37,
-    zIndex: 4,
+    zIndex: 5,
     stackOffset: { x: 10, y: 8 },
   },
   iluminacion: {
@@ -156,11 +163,11 @@ export const HABITACION_DECORATION_SLOTS: Record<string, DecorationSlot> = {
   vinilos: {
     leftPct: 64,
     topPct: 38,
-    widthPct: 17,
-    heightPct: 17,
+    widthPct: 34,
+    heightPct: 34,
     widthPx: 34,
     heightPx: 34,
-    zIndex: 6,
+    zIndex: 7,
     stackOffset: { x: 8, y: 6 },
   },
   iluminacion: {
@@ -175,7 +182,7 @@ export const HABITACION_DECORATION_SLOTS: Record<string, DecorationSlot> = {
     leftPct: 71,
     topPct: 64,
     widthPct: 41,
-    heightPct: 40,
+    heightPct: 60,
     widthPx: 260,
     heightPx: 370,
     zIndex: 8,
@@ -225,7 +232,7 @@ export const VINYL_SHELF_SLOTS: Record<string, DecorationSlot> = {
     heightPct: 18,
     widthPx: 37,
     heightPx: 37,
-    zIndex: 4,
+    zIndex: 5,
     stackOffset: { x: 10, y: 8 },
   },
   "muebles/Estantería Madera Premium.png": {
@@ -235,7 +242,7 @@ export const VINYL_SHELF_SLOTS: Record<string, DecorationSlot> = {
     heightPct: 18,
     widthPx: 37,
     heightPx: 37,
-    zIndex: 4,
+    zIndex: 5,
     stackOffset: { x: 10, y: 8 },
   },
   "muebles/Estantería Moderna.png": {
@@ -245,27 +252,64 @@ export const VINYL_SHELF_SLOTS: Record<string, DecorationSlot> = {
     heightPct: 18,
     widthPx: 37,
     heightPx: 37,
-    zIndex: 4,
+    zIndex: 5,
     stackOffset: { x: 10, y: 8 },
   },
 };
 
-export const HABITACION_VINYL_SHELF_SLOTS: Record<string, DecorationSlot> =
-  Object.fromEntries(
-    Object.keys(VINYL_SHELF_SLOTS).map((shelfId) => [
-      shelfId,
-      {
-        leftPct: 69,
-        topPct: 54,
-        widthPct: 16,
-        heightPct: 16,
-        widthPx: 34,
-        heightPx: 34,
-        zIndex: 9,
-        stackOffset: { x: 8, y: 6 },
-      },
-    ]),
-  ) as Record<string, DecorationSlot>;
+export const HABITACION_VINYL_SHELF_SLOTS: Record<string, DecorationSlot> = {
+  "muebles/Estantería Madera.png": {
+    leftPct: 60,
+    topPct: 51,
+    widthPct: 32,
+    heightPct: 32,
+    widthPx: 68,
+    heightPx: 68,
+    zIndex: 10,
+    stackOffset: { x: 8, y: 6 },
+  },
+  "muebles/Estantería Madera Premium.png": {
+    leftPct: 58,
+    topPct: 50,
+    widthPct: 32,
+    heightPct: 32,
+    widthPx: 68,
+    heightPx: 68,
+    zIndex: 10,
+    stackOffset: { x: 8, y: 6 },
+  },
+  "muebles/Estantería Moderna.png": {
+    leftPct: 62,
+    topPct: 49,
+    widthPct: 32,
+    heightPct: 32,
+    widthPx: 68,
+    heightPx: 68,
+    zIndex: 10,
+    stackOffset: { x: 8, y: 6 },
+  },
+};
+
+export const HABITACION_VINYL_GRID_LAYOUTS: Record<string, VinylShelfGridConfig> = {
+  "muebles/Estantería Madera.png": {
+    maxVinyls: 8,
+    leftColumn: { leftPct: 64, topPct: 28 },
+    rightColumn: { leftPct: 74, topPct: 48 },
+    topOffset: 8,
+  },
+  "muebles/Estantería Madera Premium.png": {
+    maxVinyls: 8,
+    leftColumn: { leftPct: 65, topPct: 37 },
+    rightColumn: { leftPct: 74, topPct: 47 },
+    topOffset: 8,
+  },
+  "muebles/Estantería Moderna.png": {
+    maxVinyls: 10,
+    leftColumn: { leftPct: 65, topPct: 26 },
+    rightColumn: { leftPct: 75, topPct: 25 },
+    topOffset: 8,
+  },
+};
 
 export const FURNITURE_TYPE_SLOTS: Record<string, DecorationSlot> = {
   estanteria: {
@@ -303,11 +347,9 @@ export const FURNITURE_TYPE_SLOTS: Record<string, DecorationSlot> = {
 export const HABITACION_FURNITURE_TYPE_SLOTS: Record<string, DecorationSlot> = {
   estanteria: {
     leftPct: 71,
-    topPct: 65,
-    widthPct: 40,
-    heightPct: 40,
-    widthPx: 248,
-    heightPx: 380,
+    topPct: 45,
+    widthPct: 25,
+    heightPct: 60,
     zIndex: 8,
     stackOffset: { x: -6, y: 5 },
   },
@@ -322,11 +364,11 @@ export const HABITACION_FURNITURE_TYPE_SLOTS: Record<string, DecorationSlot> = {
     stackOffset: { x: -6, y: 5 },
   },
   sillon: {
-    leftPct: 39,
-    topPct: 73,
+    leftPct: 41,
+    topPct: 65,
     widthPct: 33,
     heightPct: 32,
-    widthPx: 560,
+    widthPx: 860,
     heightPx: 286,
     zIndex: 8,
     stackOffset: { x: -6, y: 5 },
