@@ -25,6 +25,7 @@ type ShopStore = {
 };
 
 const defaultCategory = SHOP_CATEGORIES[0]?.id ?? "banderas";
+const validCategoryIds = new Set(SHOP_CATEGORIES.map((category) => category.id));
 
 export const useShopStore = create<ShopStore>((set) => ({
   isOpen: false,
@@ -154,9 +155,13 @@ export const useShopStore = create<ShopStore>((set) => ({
       return;
     }
     const normalizeItemId = (id: string) => id.replace(/\.png\.png$/i, ".png");
+    const storedCategory =
+      stored.selectedCategory && validCategoryIds.has(stored.selectedCategory)
+        ? stored.selectedCategory
+        : defaultCategory;
     set({
       owned: (stored.owned ?? []).map(normalizeItemId),
-      selectedCategory: stored.selectedCategory ?? defaultCategory,
+      selectedCategory: storedCategory,
       deck: stored.deck ?? [],
       decorations: (stored.decorations ?? []).map(normalizeItemId),
     });

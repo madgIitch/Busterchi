@@ -4,6 +4,7 @@ import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import ActionButtons from "@/components/ActionButtons";
 import InventoryModal from "@/components/InventoryModal";
+import PatchNotesModal from "@/components/PatchNotesModal";
 import PetScene from "@/components/PetScene";
 import ShopModal from "@/components/ShopModal";
 import SpeechBubble from "@/components/SpeechBubble";
@@ -31,6 +32,7 @@ export default function Home() {
   const { openShop, openInventory, rehydrate: rehydrateShop } = useShopStore();
   const [now, setNow] = useState(0);
   const [isWalkGameOpen, setIsWalkGameOpen] = useState(false);
+  const [isPatchNotesOpen, setIsPatchNotesOpen] = useState(false);
 
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 1000);
@@ -184,6 +186,20 @@ export default function Home() {
             <h1 className="text-base font-normal sm:text-2xl">Bustergochi</h1>
           </div>
           <div className="flex items-center gap-2">
+            <button
+              type="button"
+              className="h-8 w-8 rounded-full bg-surface text-text shadow-sm shadow-black/10 sm:h-10 sm:w-10"
+              aria-label="Notas del parche"
+              onClick={() => setIsPatchNotesOpen(true)}
+            >
+              <Image
+                src="/uiElements/patchNotes.png"
+                alt=""
+                width={20}
+                height={20}
+                className="mx-auto"
+              />
+            </button>
             <div className="flex items-center gap-1 rounded-full bg-surface px-2 py-1 text-[10px] text-text shadow-sm shadow-black/10 sm:text-xs">
               <Image
                 src="/uiElements/CoinIcon.png"
@@ -232,6 +248,10 @@ export default function Home() {
         <SpeechBubble line={lastSpeechLine} />
         <InventoryModal />
         <ShopModal />
+        <PatchNotesModal
+          isOpen={isPatchNotesOpen}
+          onClose={() => setIsPatchNotesOpen(false)}
+        />
         <WalkGameModal
           isOpen={isWalkGameOpen}
           onClose={() => setIsWalkGameOpen(false)}
