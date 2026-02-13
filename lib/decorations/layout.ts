@@ -119,6 +119,102 @@ export const DECORATION_SLOTS: Record<string, DecorationSlot> = {
   },
 };
 
+export const HABITACION_DECORATION_SLOTS: Record<string, DecorationSlot> = {
+  paredes: { leftPct: 50, topPct: 50, widthPct: 100, heightPct: 100, zIndex: 1 },
+  alfombras: {
+    leftPct: 53,
+    topPct: 87,
+    widthPct: 74,
+    heightPct: 32,
+    zIndex: 3,
+    stackOffset: { x: 8, y: 4 },
+  },
+  ventanas: {
+    leftPct: 80,
+    topPct: 26,
+    widthPct: 29,
+    heightPct: 32,
+    zIndex: 9,
+    stackOffset: { x: -6, y: 4 },
+  },
+  carteles: {
+    leftPct: 27,
+    topPct: 30,
+    widthPct: 25,
+    heightPct: 25,
+    zIndex: 10,
+    stackOffset: { x: 7, y: 5 },
+  },
+  banderas: {
+    leftPct: 16,
+    topPct: 19,
+    widthPct: 21,
+    heightPct: 19,
+    zIndex: 10,
+    stackOffset: { x: 8, y: 5 },
+  },
+  vinilos: {
+    leftPct: 64,
+    topPct: 38,
+    widthPct: 17,
+    heightPct: 17,
+    widthPx: 34,
+    heightPx: 34,
+    zIndex: 6,
+    stackOffset: { x: 8, y: 6 },
+  },
+  iluminacion: {
+    leftPct: 50,
+    topPct: 10,
+    widthPct: 20,
+    heightPct: 21,
+    zIndex: 15,
+    stackOffset: { x: -5, y: 6 },
+  },
+  muebles: {
+    leftPct: 71,
+    topPct: 64,
+    widthPct: 41,
+    heightPct: 40,
+    widthPx: 260,
+    heightPx: 370,
+    zIndex: 8,
+    stackOffset: { x: -6, y: 6 },
+  },
+  camas: {
+    leftPct: 36,
+    topPct: 70,
+    widthPct: 50,
+    heightPct: 40,
+    zIndex: 12,
+    stackOffset: { x: 6, y: 5 },
+  },
+  plantas: {
+    leftPct: 84,
+    topPct: 67,
+    widthPct: 24,
+    heightPct: 31,
+    zIndex: 13,
+    stackOffset: { x: 7, y: 5 },
+  },
+  juguetes: {
+    leftPct: 60,
+    topPct: 88,
+    widthPct: 21,
+    heightPct: 17,
+    zIndex: 14,
+    stackOffset: { x: 8, y: 4 },
+  },
+  accesorios: {
+    leftPct: 46,
+    topPct: 79,
+    widthPct: 22,
+    heightPct: 20,
+    zIndex: 14,
+    stackOffset: { x: 6, y: 5 },
+  },
+};
+
 export const DECORATION_OVERRIDES: Record<string, DecorationSlot> = {};
 
 export const VINYL_SHELF_SLOTS: Record<string, DecorationSlot> = {
@@ -154,6 +250,23 @@ export const VINYL_SHELF_SLOTS: Record<string, DecorationSlot> = {
   },
 };
 
+export const HABITACION_VINYL_SHELF_SLOTS: Record<string, DecorationSlot> =
+  Object.fromEntries(
+    Object.keys(VINYL_SHELF_SLOTS).map((shelfId) => [
+      shelfId,
+      {
+        leftPct: 69,
+        topPct: 54,
+        widthPct: 16,
+        heightPct: 16,
+        widthPx: 34,
+        heightPx: 34,
+        zIndex: 9,
+        stackOffset: { x: 8, y: 6 },
+      },
+    ]),
+  ) as Record<string, DecorationSlot>;
+
 export const FURNITURE_TYPE_SLOTS: Record<string, DecorationSlot> = {
   estanteria: {
     leftPct: 25,
@@ -184,5 +297,38 @@ export const FURNITURE_TYPE_SLOTS: Record<string, DecorationSlot> = {
     heightPx: 308,
     zIndex: 6,
     stackOffset: { x: -8, y: 6 },
+  },
+};
+
+export const HABITACION_FURNITURE_TYPE_SLOTS: Record<string, DecorationSlot> = {
+  estanteria: {
+    leftPct: 71,
+    topPct: 65,
+    widthPct: 40,
+    heightPct: 40,
+    widthPx: 248,
+    heightPx: 380,
+    zIndex: 8,
+    stackOffset: { x: -6, y: 5 },
+  },
+  mesa: {
+    leftPct: 58,
+    topPct: 84,
+    widthPct: 36,
+    heightPct: 30,
+    widthPx: 385,
+    heightPx: 180,
+    zIndex: 9,
+    stackOffset: { x: -6, y: 5 },
+  },
+  sillon: {
+    leftPct: 39,
+    topPct: 73,
+    widthPct: 33,
+    heightPct: 32,
+    widthPx: 560,
+    heightPx: 286,
+    zIndex: 8,
+    stackOffset: { x: -6, y: 5 },
   },
 };

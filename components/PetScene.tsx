@@ -5,6 +5,9 @@ import {
   DECORATION_SLOTS,
   DEFAULT_DECORATION_SLOT,
   FURNITURE_TYPE_SLOTS,
+  HABITACION_DECORATION_SLOTS,
+  HABITACION_FURNITURE_TYPE_SLOTS,
+  HABITACION_VINYL_SHELF_SLOTS,
   VINYL_SHELF_SLOTS,
 } from "@/lib/decorations/layout";
 import { useShopStore } from "@/store/useShopStore";
@@ -26,6 +29,9 @@ function getBackgroundByTime(): string {
 }
 
 export default function PetScene({ isSleeping }: { isSleeping: boolean }) {
+  const [activeScene, setActiveScene] = useState<"salon" | "habitacion">(
+    "salon",
+  );
   const petImage = isSleeping ? "/pet/buster_sleep.png" : "/pet/buster_idle.png";
   const altText = isSleeping ? "Buster sleeping" : "Buster idle";
   const decorations = useShopStore((state) => state.decorations);
@@ -35,6 +41,18 @@ export default function PetScene({ isSleeping }: { isSleeping: boolean }) {
   const hasWindowEquipped = decorations.some((itemId) =>
     itemId.startsWith("ventanas/"),
   );
+  const sceneSlots =
+    activeScene === "habitacion"
+      ? HABITACION_DECORATION_SLOTS
+      : DECORATION_SLOTS;
+  const sceneVinylShelfSlots =
+    activeScene === "habitacion"
+      ? HABITACION_VINYL_SHELF_SLOTS
+      : VINYL_SHELF_SLOTS;
+  const sceneFurnitureTypeSlots =
+    activeScene === "habitacion"
+      ? HABITACION_FURNITURE_TYPE_SLOTS
+      : FURNITURE_TYPE_SLOTS;
 
   useEffect(() => {
     const updateBackground = () => {
@@ -82,6 +100,9 @@ export default function PetScene({ isSleeping }: { isSleeping: boolean }) {
   const placedDecorations = decorations
     .map((itemId, index) => {
     const category = itemId.split("/")[0] ?? "";
+    if (activeScene === "habitacion" && category === "ventanas") {
+      return null;
+    }
     if (category === "vinilos" && !activeShelfId) {
       return null;
     }
@@ -99,16 +120,16 @@ export default function PetScene({ isSleeping }: { isSleeping: boolean }) {
     }
     const vinylSlot =
       category === "vinilos" && activeShelfId
-        ? VINYL_SHELF_SLOTS[activeShelfId]
+        ? sceneVinylShelfSlots[activeShelfId]
         : undefined;
     const furnitureSlot = furnitureType
-      ? FURNITURE_TYPE_SLOTS[furnitureType]
+      ? sceneFurnitureTypeSlots[furnitureType]
       : undefined;
     const slot =
       DECORATION_OVERRIDES[itemId] ??
       vinylSlot ??
       furnitureSlot ??
-      DECORATION_SLOTS[category] ??
+      sceneSlots[category] ??
       DEFAULT_DECORATION_SLOT;
     const offset = slot.stackOffset ?? { x: 0, y: 0 };
     const left = `calc(${slot.leftPct}% + ${
@@ -133,33 +154,45 @@ export default function PetScene({ isSleeping }: { isSleeping: boolean }) {
     );
 
   return (
-    <section className="w-full rounded-3xl bg-surface p-4 shadow-lg shadow-black/10 sm:p-6">
-      <div
-        ref={sceneRef}
-        className="relative w-full aspect-3/2 sm:aspect-3/2 overflow-hidden rounded-2xl bg-background/60"
-      >
-        {hasWindowEquipped ? (
-          <>
+    <>
+      <section className="w-full rounded-3xl bg-surface p-4 shadow-lg shadow-black/10 sm:p-6">
+        <div
+          ref={sceneRef}
+          className="relative w-full aspect-3/2 sm:aspect-3/2 overflow-hidden rounded-2xl bg-background/60"
+        >
+        {activeScene === "salon" ? (
+          hasWindowEquipped ? (
+            <>
+              <Image
+                src={backgroundImage}
+                alt=""
+                fill
+                priority
+                className="z-0 object-contain object-top"
+                sizes="(max-width: 640px) 95vw, 420px"
+              />
+              <Image
+                src="/scenes/houseConVentana.png"
+                alt=""
+                fill
+                priority
+                className="z-1 object-cover"
+                sizes="(max-width: 640px) 95vw, 420px"
+              />
+            </>
+          ) : (
             <Image
-              src={backgroundImage}
+              src="/scenes/hoseplaceholder.png"
               alt=""
               fill
               priority
-              className="z-0 object-contain object-top"
-              sizes="(max-width: 640px) 95vw, 420px"
+              className="object-cover"
+              sizes="(max-width: 768px) 100vw, 420px"
             />
-            <Image
-              src="/scenes/houseConVentana.png"
-              alt=""
-              fill
-              priority
-              className="z-1 object-cover"
-              sizes="(max-width: 640px) 95vw, 420px"
-            />
-          </>
+          )
         ) : (
           <Image
-            src="/scenes/hoseplaceholder.png"
+            src="/scenes/habitaci%C3%B3n.png"
             alt=""
             fill
             priority
@@ -216,9 +249,44 @@ export default function PetScene({ isSleeping }: { isSleeping: boolean }) {
           width={110}
           height={90}
           priority
-          className="absolute left-[60%] top-[80%] z-25 h-auto w-[clamp(90px,28vw,130px)] -translate-x-1/2 -translate-y-1/2 idle-float"
+          className={`absolute z-25 h-auto w-[clamp(90px,28vw,130px)] -translate-x-1/2 -translate-y-1/2 idle-float ${
+            activeScene === "habitacion"
+              ? "left-[68%] top-[80%]"
+              : "left-[60%] top-[80%]"
+          }`}
         />
+        </div>
+      </section>
+      <div className="mt-3 flex items-center justify-center gap-4">
+        <button
+          type="button"
+          onClick={() => setActiveScene("salon")}
+          aria-label="Ir a la escena izquierda"
+          className="h-8 w-8 rounded-full bg-background text-sm text-text shadow-sm shadow-black/20 sm:h-9 sm:w-9"
+        >
+          <Image
+            src="/uiElements/fleIzq.png"
+            alt=""
+            width={16}
+            height={16}
+            className="mx-auto"
+          />
+        </button>
+        <button
+          type="button"
+          onClick={() => setActiveScene("habitacion")}
+          aria-label="Ir a la escena derecha"
+          className="h-8 w-8 rounded-full bg-background text-sm text-text shadow-sm shadow-black/20 sm:h-9 sm:w-9"
+        >
+          <Image
+            src="/uiElements/fleDer.png"
+            alt=""
+            width={16}
+            height={16}
+            className="mx-auto"
+          />
+        </button>
       </div>
-    </section>
+    </>
   );
 }
