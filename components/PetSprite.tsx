@@ -34,21 +34,21 @@ export default function PetSprite({
     setFrameIndex(0);
   }, [direction, mode, isSleeping, reducedMotion]);
 
+  const frameMs = mode === "idle" ? 160 : mode === "sleeping" ? 200 : 95;
+
   useEffect(() => {
-    if (isSleeping || reducedMotion || frames.length <= 1) {
+    if (reducedMotion || frames.length <= 1) {
       return;
     }
     const id = window.setInterval(() => {
       setFrameIndex((index) => (index + 1) % frames.length);
-    }, mode === "idle" ? 160 : 95);
+    }, frameMs);
     return () => window.clearInterval(id);
-  }, [frames.length, isSleeping, mode, reducedMotion]);
+  }, [frames.length, frameMs, reducedMotion]);
 
-  const src = isSleeping
-    ? PET_SLEEP_FRAME
-    : reducedMotion
-      ? getPetRotation(direction)
-      : frames[frameIndex] ?? getPetRotation(direction) ?? PET_FALLBACK_FRAME;
+  const src = reducedMotion
+    ? getPetRotation(direction)
+    : frames[frameIndex] ?? getPetRotation(direction) ?? PET_FALLBACK_FRAME;
 
   return (
     <img

@@ -11,7 +11,7 @@ export const PET_DIRECTIONS = [
 
 export type PetDirection = (typeof PET_DIRECTIONS)[number];
 
-export type PetAnimationMode = "idle" | "crouch" | "happy" | "jump";
+export type PetAnimationMode = "idle" | "walk" | "bark" | "jump" | "sleeping";
 
 type DirectionFrames = Record<PetDirection, string[]>;
 
@@ -35,6 +35,22 @@ const buildFrames = (
     return frames;
   }, {} as DirectionFrames);
 
+// For animations that only have a south-facing sprite (sleeping)
+const buildFramesSouthOnly = (
+  animationId: string,
+  frameCount: number,
+): DirectionFrames =>
+  PET_DIRECTIONS.reduce((frames, direction) => {
+    frames[direction] = Array.from(
+      { length: frameCount },
+      (_, index) =>
+        `${PET_ROOT}/animations/${animationId}/south/frame_${String(
+          index,
+        ).padStart(3, "0")}.png`,
+    );
+    return frames;
+  }, {} as DirectionFrames);
+
 export const PET_ROTATIONS: Record<PetDirection, string> =
   PET_DIRECTIONS.reduce((rotations, direction) => {
     rotations[direction] = buildRotation(direction);
@@ -42,15 +58,11 @@ export const PET_ROTATIONS: Record<PetDirection, string> =
   }, {} as Record<PetDirection, string>);
 
 export const PET_ANIMATIONS: Record<PetAnimationMode, DirectionFrames> = {
-  // Exported asset folders have generated IDs, so these names document the
-  // current visual role in one place for easy retagging later.
-  idle: buildFrames("animation-343e2aad", 8),
-  crouch: buildFrames("animation-5a81d1b0", 4),
-  happy: buildFrames("animation-c2da9be4", 6),
-  jump: buildFrames(
-    "La_animacin_debe_mostrar_un_salto_ligero_y_gil_pro-5084480a",
-    9,
-  ),
+  idle: buildFrames("idle", 8),
+  walk: buildFrames("walking", 4),
+  bark: buildFrames("bark", 6),
+  jump: buildFrames("junping", 9),
+  sleeping: buildFramesSouthOnly("sleeping", 5),
 };
 
 export const PET_FALLBACK_FRAME = "/pet/buster_idle.png";

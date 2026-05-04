@@ -54,10 +54,10 @@ const WANDER_BOUNDS: Record<SceneName, { minX: number; maxX: number; minY: numbe
 };
 
 const ACTION_MODE_BY_KEY: Record<string, PetAnimationMode> = {
-  snack: "happy",
-  walk: "happy",
+  snack: "bark",
+  walk: "walk",
   pet: "jump",
-  bath: "happy",
+  bath: "bark",
   levelUp: "jump",
 };
 const TURN_STEP_MS = 140;
@@ -101,6 +101,7 @@ export default function PetScene({
   const tapPet = usePetStore((state) => state.tapPet);
   const sceneRef = useRef<HTMLDivElement | null>(null);
   const turnTimeoutsRef = useRef<number[]>([]);
+  const petModeRef = useRef<PetAnimationMode>("idle");
   const [sceneScale, setSceneScale] = useState(1);
   const [backgroundImage, setBackgroundImage] = useState(getBackgroundByTime());
   const [particles, setParticles] = useState<{ x: number; y: number } | null>(
@@ -112,7 +113,7 @@ export default function PetScene({
   const [petDirection, setPetDirection] = useState<PetDirection>(
     DEFAULT_PET_DIRECTION,
   );
-  const [tapModeUntil, setTapModeUntil] = useState(0);
+  const [isTapping, setIsTapping] = useState(false);
   const reducedMotion = useReducedMotionPreference();
   const hasWindowEquipped = decorations.some((itemId) =>
     itemId.startsWith("ventanas/"),
@@ -157,6 +158,9 @@ export default function PetScene({
       return;
     }
     const id = window.setInterval(() => {
+      if (petModeRef.current !== "walk" && petModeRef.current !== "jump") {
+        return;
+      }
       setPetPosition((current) => {
         const next = getRandomPosition(activeScene);
         const nextDirection = getDirectionFromDelta(
@@ -341,14 +345,17 @@ export default function PetScene({
 
   const actionMode = visualAction ? ACTION_MODE_BY_KEY[visualAction] : null;
   const petMode: PetAnimationMode = isSleeping
-    ? "idle"
+    ? "sleeping"
     : isLevelingUp
       ? "jump"
       : actionMode
         ? actionMode
-        : tapModeUntil > Date.now()
+        : isTapping
           ? "jump"
           : "idle";
+  useEffect(() => {
+    petModeRef.current = petMode;
+  });
 
   return (
     <>
@@ -452,7 +459,8 @@ export default function PetScene({
               x: event.clientX - rect.left,
               y: event.clientY - rect.top,
             });
-            setTapModeUntil(Date.now() + 900);
+            setIsTapping(true);
+            window.setTimeout(() => setIsTapping(false), 900);
             tapPet();
           }}
           className={`pet-sprite-anchor absolute z-25 w-[clamp(78px,24vw,128px)] -translate-x-1/2 -translate-y-1/2 ${
@@ -466,7 +474,7 @@ export default function PetScene({
         >
           <PetSprite
             mode={petMode}
-            direction={petDirection}
+            direction={isSleeping ? "south" : petDirection}
             isSleeping={isSleeping}
             reducedMotion={reducedMotion}
           />
