@@ -1,7 +1,7 @@
-﻿"use client";
+"use client";
 
 import Image from "next/image";
-import { useEffect, useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import ActionButtons from "@/components/ActionButtons";
 import CatchGameModal from "@/components/CatchGameModal";
 import InventoryModal from "@/components/InventoryModal";
@@ -41,6 +41,8 @@ export default function Home() {
   const [isWalkGameOpen, setIsWalkGameOpen] = useState(false);
   const [isCatchGameOpen, setIsCatchGameOpen] = useState(false);
   const [isPatchNotesOpen, setIsPatchNotesOpen] = useState(false);
+  const [visualAction, setVisualAction] = useState<string | null>(null);
+  const visualActionId = useRef(0);
 
   useEffect(() => {
     const id = setInterval(() => setNow(Date.now()), 1000);
@@ -126,10 +128,10 @@ export default function Home() {
     {
       label: "Hygiene",
       value: hygiene,
-      iconSrc: "/uiElements/LoveStatusIcon.png",
-      barEmptySrc: "/uiElements/ProgressEmptyLove.png",
-      barFullSrc: "/uiElements/ProgressFullLove.png",
-      endIcon: "🫧",
+      iconSrc: "/uiElements/WashStatusIcon.png",
+      barEmptySrc: "/uiElements/ProgressEmptyWash.png",
+      barFullSrc: "/uiElements/ProgressFullWash.png",
+      endIcon: "",
     },
   ];
 
@@ -145,6 +147,17 @@ export default function Home() {
     }
   }, [isSleepingNow]);
 
+  const triggerVisualAction = (action: string, durationMs = 900) => {
+    const nextId = visualActionId.current + 1;
+    visualActionId.current = nextId;
+    setVisualAction(action);
+    window.setTimeout(() => {
+      if (visualActionId.current === nextId) {
+        setVisualAction(null);
+      }
+    }, durationMs);
+  };
+
   const actions = [
     {
       label: "Snack",
@@ -154,7 +167,9 @@ export default function Home() {
         getRemaining("snack") > 0
           ? `${Math.ceil(getRemaining("snack") / 1000)}s`
           : "",
-      onClick: () => performAction("snack"),
+      onClick: () => {
+        setIsCatchGameOpen(true);
+      },
     },
     {
       label: "Walk",
@@ -166,6 +181,7 @@ export default function Home() {
           : "",
       onClick: () => {
         performAction("walk");
+        triggerVisualAction("walk", 1200);
         setIsWalkGameOpen(ENABLE_WALK_GAME);
       },
     },
@@ -177,7 +193,10 @@ export default function Home() {
         getRemaining("pet") > 0
           ? `${Math.ceil(getRemaining("pet") / 1000)}s`
           : "",
-      onClick: () => performAction("pet"),
+      onClick: () => {
+        performAction("pet");
+        triggerVisualAction("pet");
+      },
     },
     {
       label: "Sleep",
@@ -195,13 +214,16 @@ export default function Home() {
     },
     {
       label: "Bath",
-      emoji: "🫧",
+      imageSrc: "/uiElements/Wash.png",
       disabled: isSleepingNow || getRemaining("bath") > 0,
       cooldownLabel:
         getRemaining("bath") > 0
           ? `${Math.ceil(getRemaining("bath") / 1000)}s`
           : "",
-      onClick: () => performAction("bath"),
+      onClick: () => {
+        performAction("bath");
+        triggerVisualAction("bath");
+      },
     },
   ];
 
@@ -241,14 +263,6 @@ export default function Home() {
             </div>
             <button
               type="button"
-              className="h-8 min-w-8 rounded-full bg-surface px-2 text-sm text-text shadow-sm shadow-black/10 sm:h-10"
-              aria-label="Jugar"
-              onClick={() => setIsCatchGameOpen(true)}
-            >
-              🎮
-            </button>
-            <button
-              type="button"
               className="h-8 w-8 rounded-full bg-surface text-text shadow-sm shadow-black/10 sm:h-10 sm:w-10"
               aria-label="Inventario"
               onClick={openInventory}
@@ -278,12 +292,16 @@ export default function Home() {
           </div>
         </header>
 
-        <PetScene isSleeping={isSleepingNow} />
+        <PetScene
+          isSleeping={isSleepingNow}
+          visualAction={visualAction}
+          isLevelingUp={isLevelingUp}
+        />
+        <SpeechBubble line={lastSpeechLine} />
         <StatsBars stats={stats} />
         <section className="w-full rounded-3xl bg-surface p-2 shadow-sm shadow-black/10 sm:p-4">
           <ActionButtons actions={actions} />
         </section>
-        <SpeechBubble line={lastSpeechLine} />
         <InventoryModal />
         <ShopModal />
         <PatchNotesModal
@@ -298,6 +316,8 @@ export default function Home() {
           isOpen={isCatchGameOpen}
           onClose={() => setIsCatchGameOpen(false)}
           onReward={(bucksterReward, xpReward) => {
+            performAction("snack");
+            triggerVisualAction("snack");
             addBucksters(bucksterReward);
             gainXP(xpReward);
           }}

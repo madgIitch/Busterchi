@@ -66,6 +66,20 @@ html {
   image-rendering: pixelated;
 }
 
+.pet-sprite {
+  display: block;
+  image-rendering: pixelated;
+  object-fit: contain;
+  user-select: none;
+}
+
+.pet-sprite-anchor {
+  transition:
+    left 1.8s ease-in-out,
+    top 1.8s ease-in-out;
+  will-change: left, top;
+}
+
 .idle-float {
   animation: idleFloat 4s ease-in-out infinite;
 }
@@ -130,6 +144,13 @@ html {
   will-change: transform, opacity;
 }
 
+.combat-stat-delta {
+  pointer-events: none;
+  animation: floatUp 1s ease-out forwards;
+  z-index: 30;
+  will-change: transform, opacity;
+}
+
 @keyframes levelUpFlash {
   0% {
     opacity: 0;
@@ -174,4 +195,10 @@ html {
   color: var(--color-accent);
   white-space: nowrap;
   animation: levelUpBounce 1.8s ease-out forwards;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .pet-sprite-anchor {
+    transition: none;
+  }
 }

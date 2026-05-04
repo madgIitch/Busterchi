@@ -1,8 +1,8 @@
 export default function SpeechBubble({ line }: { line: string }) {
   return (
-    <section className="relative w-full rounded-2xl bg-surface p-4 text-sm text-text shadow-sm shadow-black/10">
-      <span>{line}</span>
-      <span className="absolute -bottom-2 left-8 h-4 w-4 rotate-45 bg-surface" />
+    <section className="relative mx-auto w-[94%] rounded-[24px] border-2 border-white/70 bg-white/92 px-4 py-3 text-center text-[13px] leading-5 text-text shadow-lg shadow-black/15">
+      <span className="relative z-10">{line}</span>
+      <span className="absolute -top-2 left-1/2 h-4 w-4 -translate-x-1/2 rotate-45 border-l-2 border-t-2 border-white/70 bg-white/92" />
     </section>
   );
 }

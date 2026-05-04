@@ -1,6 +1,7 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
 import FloatingParticles from "@/components/FloatingParticles";
+import PetSprite from "@/components/PetSprite";
 import {
   DECORATION_OVERRIDES,
   DECORATION_SLOTS,
@@ -13,6 +14,13 @@ import {
   HABITACION_VINYL_SHELF_SLOTS,
   VINYL_SHELF_SLOTS,
 } from "@/lib/decorations/layout";
+import {
+  DEFAULT_PET_DIRECTION,
+  getDirectionTurnPath,
+  getDirectionFromDelta,
+  type PetAnimationMode,
+  type PetDirection,
+} from "@/lib/petAnimations";
 import { useShopStore } from "@/store/useShopStore";
 import { usePetStore } from "@/store/usePetStore";
 
@@ -32,20 +40,80 @@ function getBackgroundByTime(): string {
   }
 }
 
-export default function PetScene({ isSleeping }: { isSleeping: boolean }) {
+type SceneName = "salon" | "habitacion";
+type PetPosition = { x: number; y: number };
+
+const SCENE_START_POSITIONS: Record<SceneName, PetPosition> = {
+  salon: { x: 60, y: 80 },
+  habitacion: { x: 68, y: 80 },
+};
+
+const WANDER_BOUNDS: Record<SceneName, { minX: number; maxX: number; minY: number; maxY: number }> = {
+  salon: { minX: 42, maxX: 72, minY: 69, maxY: 84 },
+  habitacion: { minX: 46, maxX: 78, minY: 69, maxY: 84 },
+};
+
+const ACTION_MODE_BY_KEY: Record<string, PetAnimationMode> = {
+  snack: "happy",
+  walk: "happy",
+  pet: "jump",
+  bath: "happy",
+  levelUp: "jump",
+};
+const TURN_STEP_MS = 140;
+const WALK_MOVE_DELAY_MS = 180;
+
+function getRandomPosition(scene: SceneName): PetPosition {
+  const bounds = WANDER_BOUNDS[scene];
+  return {
+    x: bounds.minX + Math.random() * (bounds.maxX - bounds.minX),
+    y: bounds.minY + Math.random() * (bounds.maxY - bounds.minY),
+  };
+}
+
+function useReducedMotionPreference() {
+  const [reducedMotion, setReducedMotion] = useState(false);
+
+  useEffect(() => {
+    const query = window.matchMedia("(prefers-reduced-motion: reduce)");
+    const update = () => setReducedMotion(query.matches);
+    update();
+    query.addEventListener("change", update);
+    return () => query.removeEventListener("change", update);
+  }, []);
+
+  return reducedMotion;
+}
+
+export default function PetScene({
+  isSleeping,
+  visualAction,
+  isLevelingUp,
+}: {
+  isSleeping: boolean;
+  visualAction?: string | null;
+  isLevelingUp?: boolean;
+}) {
   const [activeScene, setActiveScene] = useState<"salon" | "habitacion">(
     "salon",
   );
-  const petImage = isSleeping ? "/pet/buster_sleep.png" : "/pet/buster_idle.png";
-  const altText = isSleeping ? "Buster sleeping" : "Buster idle";
   const decorations = useShopStore((state) => state.decorations);
   const tapPet = usePetStore((state) => state.tapPet);
   const sceneRef = useRef<HTMLDivElement | null>(null);
+  const turnTimeoutsRef = useRef<number[]>([]);
   const [sceneScale, setSceneScale] = useState(1);
   const [backgroundImage, setBackgroundImage] = useState(getBackgroundByTime());
   const [particles, setParticles] = useState<{ x: number; y: number } | null>(
     null,
   );
+  const [petPosition, setPetPosition] = useState<PetPosition>(
+    SCENE_START_POSITIONS.salon,
+  );
+  const [petDirection, setPetDirection] = useState<PetDirection>(
+    DEFAULT_PET_DIRECTION,
+  );
+  const [tapModeUntil, setTapModeUntil] = useState(0);
+  const reducedMotion = useReducedMotionPreference();
   const hasWindowEquipped = decorations.some((itemId) =>
     itemId.startsWith("ventanas/"),
   );
@@ -75,6 +143,59 @@ export default function PetScene({ isSleeping }: { isSleeping: boolean }) {
 
     return () => clearInterval(checkInterval);
   }, []);
+
+  useEffect(() => {
+    turnTimeoutsRef.current.forEach((id) => window.clearTimeout(id));
+    turnTimeoutsRef.current = [];
+    const nextPosition = SCENE_START_POSITIONS[activeScene];
+    setPetPosition(nextPosition);
+    setPetDirection(DEFAULT_PET_DIRECTION);
+  }, [activeScene]);
+
+  useEffect(() => {
+    if (isSleeping || reducedMotion) {
+      return;
+    }
+    const id = window.setInterval(() => {
+      setPetPosition((current) => {
+        const next = getRandomPosition(activeScene);
+        const nextDirection = getDirectionFromDelta(
+          next.x - current.x,
+          next.y - current.y,
+        );
+        setPetDirection((currentDirection) => {
+          turnTimeoutsRef.current.forEach((timeoutId) =>
+            window.clearTimeout(timeoutId),
+          );
+          turnTimeoutsRef.current = [];
+
+          const turnPath = getDirectionTurnPath(currentDirection, nextDirection);
+          turnPath.forEach((direction, index) => {
+            const timeoutId = window.setTimeout(() => {
+              setPetDirection(direction);
+            }, TURN_STEP_MS * (index + 1));
+            turnTimeoutsRef.current.push(timeoutId);
+          });
+
+          const moveTimeoutId = window.setTimeout(
+            () => setPetPosition(next),
+            TURN_STEP_MS * turnPath.length + WALK_MOVE_DELAY_MS,
+          );
+          turnTimeoutsRef.current.push(moveTimeoutId);
+
+          return currentDirection;
+        });
+        return current;
+      });
+    }, 3600);
+    return () => {
+      window.clearInterval(id);
+      turnTimeoutsRef.current.forEach((timeoutId) =>
+        window.clearTimeout(timeoutId),
+      );
+      turnTimeoutsRef.current = [];
+    };
+  }, [activeScene, isSleeping, reducedMotion]);
 
   useEffect(() => {
     const node = sceneRef.current;
@@ -215,8 +336,19 @@ export default function PetScene({ isSleeping }: { isSleeping: boolean }) {
   })
     .filter(
       (decoration): decoration is NonNullable<typeof decoration> =>
-        Boolean(decoration),
+      Boolean(decoration),
     );
+
+  const actionMode = visualAction ? ACTION_MODE_BY_KEY[visualAction] : null;
+  const petMode: PetAnimationMode = isSleeping
+    ? "idle"
+    : isLevelingUp
+      ? "jump"
+      : actionMode
+        ? actionMode
+        : tapModeUntil > Date.now()
+          ? "jump"
+          : "idle";
 
   return (
     <>
@@ -320,22 +452,23 @@ export default function PetScene({ isSleeping }: { isSleeping: boolean }) {
               x: event.clientX - rect.left,
               y: event.clientY - rect.top,
             });
+            setTapModeUntil(Date.now() + 900);
             tapPet();
           }}
-          className={`absolute z-25 -translate-x-1/2 -translate-y-1/2 ${
-            activeScene === "habitacion"
-              ? "left-[68%] top-[80%] w-[clamp(68px,22vw,92px)]"
-              : "left-[60%] top-[80%] w-[clamp(68px,22vw,92px)]"
-          } ${isSleeping ? "pointer-events-none" : ""}`}
+          className={`pet-sprite-anchor absolute z-25 w-[clamp(78px,24vw,128px)] -translate-x-1/2 -translate-y-1/2 ${
+            isSleeping ? "pointer-events-none" : ""
+          }`}
+          style={{
+            left: `${petPosition.x}%`,
+            top: `${petPosition.y}%`,
+          }}
           aria-label="Tocar a Buster"
         >
-          <Image
-            src={petImage}
-            alt={altText}
-            width={110}
-            height={90}
-            priority
-            className="h-auto w-full idle-float"
+          <PetSprite
+            mode={petMode}
+            direction={petDirection}
+            isSleeping={isSleeping}
+            reducedMotion={reducedMotion}
           />
         </button>
         {particles ? (

@@ -1,13 +1,25 @@
 "use client";
 
 import Image from "next/image";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { CARD_CATALOG } from "@/lib/encounters/cards";
 import { ENEMY_DECKS } from "@/lib/encounters/enemies";
 import { ELEMENTS } from "@/lib/encounters/elements";
-import type { CardDefinition, EnemyDeck, EnemyVariant } from "@/lib/encounters/types";
+import type {
+  CardDefinition,
+  CardEffect,
+  EnemyCardDefinition,
+  EnemyDeck,
+  EnemyVariant,
+} from "@/lib/encounters/types";
 import WalkCard from "./WalkCard";
-import { createCombatState, endTurn, playCard } from "@/combat";
+import {
+  createCombatState,
+  endTurn,
+  playCard,
+  type CombatState,
+  type PlayerState,
+} from "@/combat";
 import { useShopStore } from "@/store/useShopStore";
 import { usePetStore } from "@/store/usePetStore";
 
@@ -25,6 +37,26 @@ const ELEMENT_EMOJI: Record<string, string> = {
 };
 
 type RoundEntry = { enemy: EnemyDeck; variant: EnemyVariant };
+type TrackedPlayerStat = "mood" | "stress" | "rhythm" | "calm" | "confusion" | "energy";
+type StatDelta = { id: number; stat: TrackedPlayerStat; value: number; ts: number };
+type EnemyBanner = { cardName: string; effectText: string } | null;
+
+const TRACKED_PLAYER_STATS: TrackedPlayerStat[] = [
+  "mood",
+  "stress",
+  "rhythm",
+  "calm",
+  "confusion",
+  "energy",
+];
+
+const POSITIVE_STATS = new Set<TrackedPlayerStat>([
+  "mood",
+  "rhythm",
+  "calm",
+  "energy",
+]);
+const NEGATIVE_STATS = new Set<TrackedPlayerStat>(["stress", "confusion"]);
 
 function pickRandom<T>(arr: T[]): T {
   return arr[Math.floor(Math.random() * arr.length)];
@@ -43,6 +75,114 @@ function generateRounds(): RoundEntry[] {
   }
   rounds.push({ enemy: bossDeck, variant: bossVariant });
   return rounds;
+}
+
+function cloneCombatState(state: CombatState): CombatState {
+  return {
+    ...state,
+    player: { ...state.player },
+    enemy: {
+      ...state.enemy,
+      cooldowns: { ...state.enemy.cooldowns },
+    },
+    deck: [...state.deck],
+    hand: [...state.hand],
+    discard: [...state.discard],
+    exhaust: [...state.exhaust],
+    log: [...state.log],
+  };
+}
+
+function formatEffect(effect: CardEffect) {
+  switch (effect.type) {
+    case "stress_add":
+      return `+${effect.value} estrés`;
+    case "stress_reduce":
+      return `-${effect.value} estrés`;
+    case "rhythm_add":
+      return `+${effect.value} ritmo`;
+    case "calm_add":
+      return `+${effect.value} calma`;
+    case "confusion_add":
+      return `+${effect.value} confusión`;
+    case "confusion_remove":
+      return `-${effect.value} confusión`;
+    case "heal_mood":
+      return `+${effect.value} ánimo`;
+    case "draw_cards":
+      return `roba ${effect.value}`;
+    case "damage_reduction_pct":
+      return `${effect.value}% defensa`;
+    case "enemy_hp_pct":
+      return `-${effect.value}% vida enemiga`;
+    case "enemy_hp_flat":
+      return `-${effect.value} vida enemiga`;
+    case "skip_enemy_action":
+      return "salta enemigo";
+    case "repeat_enemy_last":
+      return "repite enemigo";
+    case "exit_combat":
+      return "salida";
+    case "apply_tag":
+      return effect.tag;
+    case "note":
+      return effect.text;
+    default:
+      return "";
+  }
+}
+
+function getEnemyBanner(card: EnemyCardDefinition | undefined): EnemyBanner {
+  if (!card) {
+    return null;
+  }
+  return {
+    cardName: card.name,
+    effectText: card.effects.map(formatEffect).filter(Boolean).join(" · "),
+  };
+}
+
+function getPlayerStatDeltas(
+  before: PlayerState,
+  after: PlayerState,
+  nextId: () => number,
+): StatDelta[] {
+  return TRACKED_PLAYER_STATS.flatMap((stat) => {
+    const value = after[stat] - before[stat];
+    if (value === 0) {
+      return [];
+    }
+    return [{ id: nextId(), stat, value, ts: Date.now() }];
+  });
+}
+
+function getDeltaClassName(delta: StatDelta) {
+  const isBeneficial =
+    (POSITIVE_STATS.has(delta.stat) && delta.value > 0) ||
+    (NEGATIVE_STATS.has(delta.stat) && delta.value < 0);
+  return isBeneficial ? "text-emerald-300" : "text-red-300";
+}
+
+function getLogStyle(entry: string) {
+  if (entry.startsWith("Player:")) {
+    return {
+      icon: "🐕",
+      className: "border-sky-300/70 text-sky-200",
+      text: entry.replace(/^Player:\s*/, ""),
+    };
+  }
+  if (entry.startsWith("Enemy:")) {
+    return {
+      icon: "👾",
+      className: "border-red-300/70 text-red-200",
+      text: entry.replace(/^Enemy:\s*/, ""),
+    };
+  }
+  return {
+    icon: "⚠️",
+    className: "border-yellow-300/70 text-yellow-100",
+    text: entry,
+  };
 }
 
 function DialogueBubble({ line }: { line: string }) {
@@ -81,7 +221,7 @@ function EnemyAvatar({
         src={variant.imageSrc}
         alt={variant.name}
         fill
-        className="object-cover object-top"
+        className="object-contain object-center"
         sizes="160px"
         unoptimized
       />
@@ -128,11 +268,11 @@ function PreBattle({ round, entry, onStart, onClose }: PreBattleProps) {
           <div className="text-xs text-muted uppercase tracking-widest">
             {isBoss ? "⚠️ Encuentro final" : "Te cruzas con…"}
           </div>
+          <DialogueBubble line={line} />
           <EnemyAvatar
             variant={entry.variant}
             className={`w-40 h-40 shadow-lg shadow-black/25 border ${isBoss ? "border-red-400/50" : "border-white/30"}`}
           />
-          <DialogueBubble line={line} />
           <div className="text-center">
             <div className={`text-base font-semibold ${isBoss ? "text-red-500" : ""}`}>
               {entry.variant.name}
@@ -199,7 +339,7 @@ function BetweenRounds({
   return (
     <div className="fixed inset-0 z-50 bg-black/40">
       <div className="h-svh w-full bg-background px-4 py-6 flex flex-col items-center justify-between">
-        <div className="w-full text-center">
+        <div className="w-full shrink-0 text-center">
           <div className="text-2xl">✅</div>
           <div className="mt-2 text-base font-semibold">
             Ronda {completedRound}/{TOTAL_ROUNDS} superada
@@ -207,13 +347,18 @@ function BetweenRounds({
           <div className="mt-1 text-xs text-muted">
             Bucksters acumulados: {buckstersSoFar} 🪙
           </div>
-          <div className="mt-3 flex flex-col items-center gap-1">
-            <span className="text-[10px] text-muted">{defeatedVariant.name} dice:</span>
-            <DialogueBubble line={defeatLine} />
-          </div>
         </div>
 
-        <div className="flex flex-col items-center gap-3 flex-1 justify-center">
+        <div className="flex flex-1 flex-col items-center justify-center gap-3 pb-8">
+          <span className="text-[10px] text-muted">{defeatedVariant.name} dice:</span>
+          <DialogueBubble line={defeatLine} />
+          <EnemyAvatar
+            variant={defeatedVariant}
+            className="h-40 w-40 border border-white/30 shadow-lg shadow-black/25"
+          />
+        </div>
+
+        <div className="hidden flex-col items-center gap-3">
           {nextEntry ? (
             <>
               <div className="text-xs text-muted uppercase tracking-widest">
@@ -235,7 +380,7 @@ function BetweenRounds({
           )}
         </div>
 
-        <div className="w-full flex gap-3">
+        <div className="w-full shrink-0 flex gap-3">
           <button
             type="button"
             onClick={onStop}
@@ -281,14 +426,60 @@ function BattleSession({
   const [state, setState] = useState(() =>
     createCombatState(starterDeck, entry.enemy),
   );
+  const [enemyBanner, setEnemyBanner] = useState<EnemyBanner>(null);
+  const [statDeltas, setStatDeltas] = useState<StatDelta[]>([]);
+  const bannerTimeoutRef = useRef<number | null>(null);
+  const deltaIdRef = useRef(0);
 
   const hand = useMemo(() => state.hand, [state.hand]);
   const isBoss = round === TOTAL_ROUNDS;
+  const nextDeltaId = () => {
+    deltaIdRef.current += 1;
+    return deltaIdRef.current;
+  };
+
+  useEffect(() => {
+    return () => {
+      if (bannerTimeoutRef.current) {
+        window.clearTimeout(bannerTimeoutRef.current);
+      }
+    };
+  }, []);
+
+  const showEnemyBanner = (banner: EnemyBanner) => {
+    if (!banner) {
+      return;
+    }
+    setEnemyBanner(banner);
+    if (bannerTimeoutRef.current) {
+      window.clearTimeout(bannerTimeoutRef.current);
+    }
+    bannerTimeoutRef.current = window.setTimeout(() => {
+      setEnemyBanner(null);
+      bannerTimeoutRef.current = null;
+    }, 2000);
+  };
+
+  const addStatDeltas = (deltas: StatDelta[]) => {
+    if (deltas.length === 0) {
+      return;
+    }
+    setStatDeltas((current) => [...current, ...deltas]);
+    deltas.forEach((delta) => {
+      window.setTimeout(() => {
+        setStatDeltas((current) =>
+          current.filter((candidate) => candidate.id !== delta.id),
+        );
+      }, 1000);
+    });
+  };
 
   const handlePlayCard = (card: CardDefinition) => {
     setState((prev) => {
-      const next = { ...prev };
+      const next = cloneCombatState(prev);
+      const beforePlayer = { ...next.player };
       playCard(next, card.id);
+      addStatDeltas(getPlayerStatDeltas(beforePlayer, next.player, nextDeltaId));
       if (next.outcome === "win") setTimeout(onWin, 400);
       if (next.outcome === "lose") setTimeout(onLose, 400);
       return { ...next };
@@ -297,8 +488,26 @@ function BattleSession({
 
   const handleEndTurn = () => {
     setState((prev) => {
-      const next = { ...prev };
+      const next = cloneCombatState(prev);
+      const beforePlayer = { ...next.player };
+      const beforeLogLength = next.log.length;
       endTurn(next);
+      addStatDeltas(getPlayerStatDeltas(beforePlayer, next.player, nextDeltaId));
+      const latestEnemyLog = next.log
+        .slice(beforeLogLength)
+        .reverse()
+        .find((entry) => entry.startsWith("Enemy:"));
+      showEnemyBanner(
+        latestEnemyLog === "Enemy: skipped"
+          ? { cardName: "Turno saltado", effectText: "El enemigo no actua" }
+          : getEnemyBanner(
+              next.enemy.lastCardId
+                ? next.enemyDeck.cards.find(
+                    (card) => card.id === next.enemy.lastCardId,
+                  )
+                : undefined,
+            ),
+      );
       if (next.outcome === "win") setTimeout(onWin, 400);
       if (next.outcome === "lose") setTimeout(onLose, 400);
       return { ...next };
@@ -307,6 +516,7 @@ function BattleSession({
 
   const getCardSize = (card: CardDefinition) =>
     card.cost >= 3 ? "h-[170px]" : "h-[150px]";
+  const cardsPlayed = Math.min(state.playerCardsPlayed, 2);
 
   return (
     <div className="fixed inset-0 z-50 bg-black/40">
@@ -352,6 +562,16 @@ function BattleSession({
                 sizes="(max-width: 768px) 100vw, 420px"
               />
               <div className="absolute inset-0 bg-linear-to-b from-transparent via-transparent to-black/15" />
+              {enemyBanner ? (
+                <div className="absolute left-1/2 top-5 z-20 w-[min(86%,320px)] -translate-x-1/2 rounded-2xl border border-red-200/50 bg-red-700/80 px-4 py-2 text-center text-white shadow-lg shadow-black/30 animate-bounce">
+                  <div className="text-xs font-semibold">
+                    {enemyBanner.cardName}
+                  </div>
+                  <div className="mt-0.5 text-[10px] text-red-50">
+                    {enemyBanner.effectText || "Sin efecto visible"}
+                  </div>
+                </div>
+              ) : null}
               {/* Buster */}
               <Image
                 src="/pet/buster_idle.png"
@@ -393,7 +613,56 @@ function BattleSession({
             </div>
 
             {/* Player stats */}
-            <div className="mt-3 flex flex-wrap items-center gap-2 text-[10px] text-muted">
+            <div className="relative mt-3 flex flex-wrap items-center gap-2 text-[10px] text-muted">
+              <div className="flex items-center gap-1 rounded-full bg-background/80 px-3 py-1 shadow-sm shadow-black/10">
+                <div
+                  className="flex gap-0.5"
+                  aria-label={`Energia ${state.player.energy}/${state.player.maxEnergy}`}
+                >
+                  {Array.from({ length: state.player.maxEnergy }, (_, index) => (
+                    <span
+                      key={index}
+                      className={`h-3 w-3 rounded-[3px] ${
+                        index < state.player.energy
+                          ? "bg-yellow-300 shadow-sm shadow-yellow-900/20"
+                          : "bg-black/20"
+                      }`}
+                    />
+                  ))}
+                </div>
+                <span className="ml-1">
+                  {state.player.energy}/{state.player.maxEnergy}
+                </span>
+              </div>
+              {[
+                ["Animo", state.player.mood],
+                ["Estres", state.player.stress],
+                ["Ritmo", state.player.rhythm],
+                ["Calma", state.player.calm],
+                ["Confusion", state.player.confusion],
+              ].map(([label, val]) => (
+                <div
+                  key={String(label)}
+                  className="rounded-full bg-background/80 px-3 py-1 shadow-sm shadow-black/10"
+                >
+                  {label} {val}
+                </div>
+              ))}
+              {statDeltas.map((delta, index) => (
+                <span
+                  key={delta.id}
+                  className={`combat-stat-delta absolute rounded-full bg-black/70 px-2 py-0.5 text-[11px] font-semibold ${getDeltaClassName(delta)}`}
+                  style={{
+                    left: `${12 + (index % 5) * 17}%`,
+                    top: `${index > 4 ? 28 : -18}px`,
+                  }}
+                >
+                  {delta.stat} {delta.value > 0 ? "+" : ""}
+                  {delta.value}
+                </span>
+              ))}
+            </div>
+            <div className="hidden">
               {[
                 ["⚡", `${state.player.energy}/${state.player.maxEnergy}`],
                 ["😊", state.player.mood],
@@ -413,7 +682,28 @@ function BattleSession({
           </section>
 
           {/* Turn info */}
-          <section className="rounded-3xl bg-surface px-4 py-2 text-xs text-muted">
+          <section className="flex items-center justify-between rounded-3xl bg-surface px-4 py-2 text-xs text-muted">
+            <div>
+              Turno {state.turn} ·{" "}
+              {state.phase === "A" ? "Tu turno" : "Enemigo actua primero"}
+              {state.player.stress >= 70 && (
+                <span className="ml-2 text-orange-500">Estres alto</span>
+              )}
+            </div>
+            <div className="text-[11px]" aria-label={`Cartas ${cardsPlayed}/2`}>
+              Cartas: {cardsPlayed} / 2
+              <span className="hidden">Cartas</span>
+              {false && [0, 1].map((index) => (
+                <span
+                  key={index}
+                  className={index < cardsPlayed ? "text-text" : "text-muted/50"}
+                >
+                  {index < cardsPlayed ? "●" : "○"}
+                </span>
+              ))}
+            </div>
+          </section>
+          <section className="hidden">
             Turno {state.turn} ·{" "}
             {state.phase === "A" ? "Tu turno" : "Enemigo actúa primero"}
             {state.player.stress >= 70 && (
@@ -445,7 +735,23 @@ function BattleSession({
           </section>
 
           {/* Log */}
-          <section className="rounded-2xl bg-surface p-2 text-[10px] text-muted">
+          <section className="rounded-2xl bg-surface p-3 text-xs text-muted">
+            <div className="max-h-28 space-y-1.5 overflow-y-auto pr-1">
+              {state.log.slice(-8).map((entry, i) => {
+                const style = getLogStyle(entry);
+                return (
+                  <div
+                    key={`${entry}-${i}`}
+                    className={`border-l-2 bg-background/30 py-1 pl-2 pr-1 leading-snug ${style.className}`}
+                  >
+                    <span className="mr-1">{style.icon}</span>
+                    {style.text}
+                  </div>
+                );
+              })}
+            </div>
+          </section>
+          <section className="hidden">
             <div className="max-h-20 overflow-y-auto space-y-1">
               {state.log.slice(-6).map((entry, i) => (
                 <div key={`${entry}-${i}`}>{entry}</div>
@@ -576,6 +882,10 @@ function LoseScreen({ round, defeatedByVariant, buckstersSoFar, onClose }: LoseS
             {defeatedByVariant.name} fue demasiado en la ronda {round}
           </div>
         </div>
+        <EnemyAvatar
+          variant={defeatedByVariant}
+          className="h-40 w-40 border border-red-400/40 shadow-lg shadow-black/25"
+        />
         <div className="flex flex-col items-center gap-1">
           <span className="text-[10px] text-muted">{defeatedByVariant.name} dice:</span>
           <DialogueBubble line={victoryLine} />
@@ -657,7 +967,7 @@ export default function WalkGameModal({
 
   const handleContinue = () => {
     setRound((r) => r + 1);
-    setPhase("battle");
+    setPhase("pre");
   };
 
   const handleStop = () => {

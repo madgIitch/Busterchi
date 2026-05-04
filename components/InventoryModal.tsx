@@ -76,6 +76,81 @@ const getCardEffectsDescription = (card: CardDefinition) => {
   return labels;
 };
 
+type ElementId = CardDefinition["element"];
+
+const ELEMENT_ORDER: ElementId[] = [
+  "impulso",
+  "calma",
+  "caos",
+  "vinculo",
+  "territorio",
+];
+
+const ELEMENT_STYLE: Record<
+  ElementId,
+  {
+    label: string;
+    emoji: string;
+    border: string;
+    chip: string;
+    selectedBg: string;
+    count: string;
+    segment: string;
+    check: string;
+  }
+> = {
+  impulso: {
+    label: "Impulso",
+    emoji: "🏃",
+    border: "border-orange-400",
+    chip: "bg-orange-500/90 text-white",
+    selectedBg: "bg-orange-500/15",
+    count: "bg-orange-500/15 text-orange-900 border-orange-400/60",
+    segment: "bg-orange-500",
+    check: "bg-orange-500 text-white",
+  },
+  calma: {
+    label: "Calma",
+    emoji: "🧘",
+    border: "border-sky-400",
+    chip: "bg-sky-500/90 text-white",
+    selectedBg: "bg-sky-500/15",
+    count: "bg-sky-500/15 text-sky-900 border-sky-400/60",
+    segment: "bg-sky-500",
+    check: "bg-sky-500 text-white",
+  },
+  caos: {
+    label: "Caos",
+    emoji: "🌪️",
+    border: "border-violet-400",
+    chip: "bg-violet-500/90 text-white",
+    selectedBg: "bg-violet-500/15",
+    count: "bg-violet-500/15 text-violet-900 border-violet-400/60",
+    segment: "bg-violet-500",
+    check: "bg-violet-500 text-white",
+  },
+  vinculo: {
+    label: "Vinculo",
+    emoji: "🤝",
+    border: "border-emerald-400",
+    chip: "bg-emerald-500/90 text-white",
+    selectedBg: "bg-emerald-500/15",
+    count: "bg-emerald-500/15 text-emerald-900 border-emerald-400/60",
+    segment: "bg-emerald-500",
+    check: "bg-emerald-500 text-white",
+  },
+  territorio: {
+    label: "Territorio",
+    emoji: "🧭",
+    border: "border-amber-700",
+    chip: "bg-amber-700/90 text-white",
+    selectedBg: "bg-amber-700/15",
+    count: "bg-amber-700/15 text-amber-950 border-amber-700/60",
+    segment: "bg-amber-700",
+    check: "bg-amber-700 text-white",
+  },
+};
+
 export default function InventoryModal() {
   const {
     isInventoryOpen,
@@ -95,6 +170,15 @@ export default function InventoryModal() {
   const [isDeckLimitHit, setIsDeckLimitHit] = useState(false);
   const maxDeckSize = 12;
   const catalogById = new Map(CARD_CATALOG.map((card) => [card.id, card]));
+  const lastDeckElement =
+    deck.length > 0 ? catalogById.get(deck[deck.length - 1])?.element : null;
+  const progressStyle = lastDeckElement
+    ? ELEMENT_STYLE[lastDeckElement]
+    : ELEMENT_STYLE.impulso;
+  const groupedCards = ELEMENT_ORDER.map((element) => ({
+    element,
+    cards: CARD_CATALOG.filter((card) => card.element === element),
+  }));
   const ownedInCategory = owned.filter(
     (id) => id.split("/")[0] === inventoryCategory,
   );
@@ -183,8 +267,20 @@ export default function InventoryModal() {
                   Mazo
                 </button>
                 {effectiveTab === "deck" ? (
-                  <div className="text-xs text-muted">
-                    {deck.length}/{maxDeckSize}
+                  <div
+                    className="grid flex-1 grid-cols-12 gap-0.5"
+                    aria-label={`Mazo ${deck.length}/${maxDeckSize}`}
+                  >
+                    {Array.from({ length: maxDeckSize }, (_, index) => (
+                      <span
+                        key={index}
+                        className={`h-2 rounded-full ${
+                          index < deck.length
+                            ? progressStyle.segment
+                            : "bg-background/70"
+                        }`}
+                      />
+                    ))}
                   </div>
                 ) : null}
               </>
@@ -252,7 +348,20 @@ export default function InventoryModal() {
               <div className="text-xs text-muted">
                 Selecciona hasta {maxDeckSize} cartas para tu mazo.
               </div>
-              <div className="flex flex-wrap items-center gap-2 text-[10px] text-muted">
+              <div className="flex flex-wrap items-center gap-2 text-[10px]">
+                {ELEMENT_ORDER.map((element) => {
+                  const style = ELEMENT_STYLE[element];
+                  return (
+                    <div
+                      key={element}
+                      className={`rounded-full border px-2 py-1 shadow-sm shadow-black/10 ${style.count}`}
+                    >
+                      {style.emoji} {style.label}: {deckCounts[element]}
+                    </div>
+                  );
+                })}
+              </div>
+              <div className="hidden flex-wrap items-center gap-2 text-[10px] text-muted">
                 <div className="rounded-full bg-background px-2 py-1 shadow-sm shadow-black/10">
                   🏃 Impulso: {deckCounts.impulso}
                 </div>
@@ -274,7 +383,71 @@ export default function InventoryModal() {
                   Maximo alcanzado: {maxDeckSize} cartas.
                 </div>
               ) : null}
-              <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+              <div className="space-y-5">
+                {groupedCards.map(({ element, cards }) => {
+                  const style = ELEMENT_STYLE[element];
+                  return (
+                    <section key={element} className="space-y-2">
+                      <div className="flex items-center justify-between">
+                        <div
+                          className={`rounded-full border px-3 py-1 text-xs shadow-sm shadow-black/10 ${style.count}`}
+                        >
+                          {style.emoji} {style.label}
+                        </div>
+                        <div className="text-[10px] text-muted">
+                          {deckCounts[element]} en mazo
+                        </div>
+                      </div>
+                      <div className="grid grid-cols-2 gap-3 sm:grid-cols-3">
+                        {cards.map((card) => {
+                          const isSelected = deck.includes(card.id);
+                          const descriptions = getCardEffectsDescription(card);
+                          return (
+                            <button
+                              key={card.id}
+                              type="button"
+                              onClick={() => handleToggleDeck(card.id)}
+                              className={`relative rounded-2xl border-2 p-3 pt-9 text-left shadow-sm shadow-black/10 transition active:scale-95 ${
+                                isSelected
+                                  ? `${style.border} ${style.selectedBg}`
+                                  : `${style.border} bg-surface/80`
+                              }`}
+                              aria-pressed={isSelected}
+                            >
+                              <span
+                                className={`absolute left-2 top-2 rounded-full px-2 py-0.5 text-[10px] shadow-sm shadow-black/10 ${style.chip}`}
+                              >
+                                {style.emoji} {style.label}
+                              </span>
+                              <span className="absolute right-2 top-2 rounded-full bg-background px-2 py-0.5 text-[10px] text-text shadow-sm shadow-black/10">
+                                💰 {card.cost}
+                              </span>
+                              <div className="pr-1 text-sm font-semibold leading-4 text-text">
+                                {card.name}
+                              </div>
+                              {descriptions.length > 0 ? (
+                                <div className="mt-2 space-y-1 text-[10px] leading-3 text-muted">
+                                  {descriptions.map((line, index) => (
+                                    <div key={`${card.id}-${index}`}>{line}</div>
+                                  ))}
+                                </div>
+                              ) : null}
+                              {isSelected ? (
+                                <div
+                                  className={`absolute bottom-2 right-2 flex h-7 w-7 items-center justify-center rounded-full text-xs shadow-md shadow-black/20 ${style.check}`}
+                                >
+                                  ✔
+                                </div>
+                              ) : null}
+                            </button>
+                          );
+                        })}
+                      </div>
+                    </section>
+                  );
+                })}
+              </div>
+              <div className="hidden grid-cols-2 gap-3 sm:grid-cols-3">
                 {CARD_CATALOG.map((card) => {
                   const isSelected = deck.includes(card.id);
                   const descriptions = getCardEffectsDescription(card);

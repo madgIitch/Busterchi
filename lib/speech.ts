@@ -150,21 +150,19 @@ export function getSpeechForAction(action: ActionKey) {
 }
 
 export function getSpeechForNeeds(stats: PetStats) {
-  if (stats.food < 25) {
-    return pickLine(SPEECH_LINES.needs.food);
+  const needs: Array<[keyof typeof SPEECH_LINES.needs, number]> = [
+    ["food", stats.food],
+    ["walk", stats.walk],
+    ["love", stats.love],
+    ["energy", stats.energy],
+    ["hygiene", stats.hygiene],
+  ];
+  const lowestNeed = needs.sort((a, b) => a[1] - b[1])[0];
+
+  if (lowestNeed && lowestNeed[1] < 25) {
+    return pickLine(SPEECH_LINES.needs[lowestNeed[0]]);
   }
-  if (stats.walk < 25) {
-    return pickLine(SPEECH_LINES.needs.walk);
-  }
-  if (stats.love < 25) {
-    return pickLine(SPEECH_LINES.needs.love);
-  }
-  if (stats.energy < 25) {
-    return pickLine(SPEECH_LINES.needs.energy);
-  }
-  if (stats.hygiene < 25) {
-    return pickLine(SPEECH_LINES.needs.hygiene);
-  }
+
   return pickLine(SPEECH_LINES.default);
 }
 
