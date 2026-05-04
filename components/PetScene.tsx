@@ -114,6 +114,7 @@ export default function PetScene({
     DEFAULT_PET_DIRECTION,
   );
   const [isTapping, setIsTapping] = useState(false);
+  const [sleepPhase, setSleepPhase] = useState<"intro" | "loop">("intro");
   const reducedMotion = useReducedMotionPreference();
   const hasWindowEquipped = decorations.some((itemId) =>
     itemId.startsWith("ventanas/"),
@@ -200,6 +201,16 @@ export default function PetScene({
       turnTimeoutsRef.current = [];
     };
   }, [activeScene, isSleeping, reducedMotion]);
+
+  useEffect(() => {
+    if (!isSleeping) {
+      const id = window.setTimeout(() => setSleepPhase("intro"), 0);
+      return () => window.clearTimeout(id);
+    }
+    // 5 frames × 200ms = 1000ms de intro antes del bucle
+    const id = window.setTimeout(() => setSleepPhase("loop"), 1000);
+    return () => window.clearTimeout(id);
+  }, [isSleeping]);
 
   useEffect(() => {
     const node = sceneRef.current;
@@ -345,7 +356,7 @@ export default function PetScene({
 
   const actionMode = visualAction ? ACTION_MODE_BY_KEY[visualAction] : null;
   const petMode: PetAnimationMode = isSleeping
-    ? "sleeping"
+    ? sleepPhase === "loop" ? "sleeping_loop" : "sleeping"
     : isLevelingUp
       ? "jump"
       : actionMode

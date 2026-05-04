@@ -11,7 +11,7 @@ export const PET_DIRECTIONS = [
 
 export type PetDirection = (typeof PET_DIRECTIONS)[number];
 
-export type PetAnimationMode = "idle" | "walk" | "bark" | "jump" | "sleeping";
+export type PetAnimationMode = "idle" | "walk" | "bark" | "jump" | "sleeping" | "sleeping_loop";
 
 type DirectionFrames = Record<PetDirection, string[]>;
 
@@ -39,13 +39,14 @@ const buildFrames = (
 const buildFramesSouthOnly = (
   animationId: string,
   frameCount: number,
+  startFrame = 0,
 ): DirectionFrames =>
   PET_DIRECTIONS.reduce((frames, direction) => {
     frames[direction] = Array.from(
       { length: frameCount },
       (_, index) =>
         `${PET_ROOT}/animations/${animationId}/south/frame_${String(
-          index,
+          index + startFrame,
         ).padStart(3, "0")}.png`,
     );
     return frames;
@@ -63,6 +64,7 @@ export const PET_ANIMATIONS: Record<PetAnimationMode, DirectionFrames> = {
   bark: buildFrames("bark", 6),
   jump: buildFrames("junping", 9),
   sleeping: buildFramesSouthOnly("sleeping", 5),
+  sleeping_loop: buildFramesSouthOnly("sleeping bucle", 5, 4),
 };
 
 export const PET_FALLBACK_FRAME = "/pet/buster_idle.png";

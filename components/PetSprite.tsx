@@ -34,7 +34,7 @@ export default function PetSprite({
     setFrameIndex(0);
   }, [direction, mode, isSleeping, reducedMotion]);
 
-  const frameMs = mode === "idle" ? 160 : mode === "sleeping" ? 200 : 95;
+  const frameMs = mode === "idle" ? 160 : (mode === "sleeping" || mode === "sleeping_loop") ? 200 : 95;
 
   useEffect(() => {
     if (reducedMotion || frames.length <= 1) {
