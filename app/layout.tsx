@@ -1,4 +1,5 @@
 ﻿import type { Metadata } from "next";
+import { Analytics } from "@vercel/analytics/next";
 import localFont from "next/font/local";
 import "./globals.css";
 import ServiceWorker from "@/components/ServiceWorker";
@@ -44,6 +45,7 @@ export default function RootLayout({
       >
         {children}
         <ServiceWorker />
+        <Analytics />
       </body>
     </html>
   );
