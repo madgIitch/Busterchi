@@ -15,7 +15,7 @@ export default function ActionButtons({ actions }: { actions: ActionItem[] }) {
 
   return (
     <section
-      className={`grid w-full ${isFiveColumn ? "grid-cols-5 gap-1" : "grid-cols-4 gap-3"}`}
+      className={`-translate-y-5 grid w-full ${isFiveColumn ? "grid-cols-5 gap-1" : "grid-cols-4 gap-3"}`}
     >
       {actions.map((action) => (
         <div key={action.label} className="flex flex-col items-center gap-1">
