@@ -299,7 +299,7 @@ export default function Home() {
         />
         <SpeechBubble line={lastSpeechLine} />
         <StatsBars stats={stats} />
-        <section className="w-full rounded-3xl bg-surface p-2 shadow-sm shadow-black/10 sm:p-4">
+        <section className="-mt-2 w-full rounded-3xl bg-surface p-2 shadow-sm shadow-black/10 sm:-mt-3 sm:p-4">
           <ActionButtons actions={actions} />
         </section>
         <InventoryModal />

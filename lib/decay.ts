@@ -22,7 +22,12 @@ export const DEFAULT_DECAY_RATES: DecayRates = {
   hygiene: 0.15,
 };
 
-const clampStat = (value: number) => Math.max(0, Math.min(100, value));
+const clampStat = (value: number, fallback = 100) =>
+  Number.isFinite(value)
+    ? Math.max(0, Math.min(100, value))
+    : Number.isFinite(fallback)
+      ? Math.max(0, Math.min(100, fallback))
+      : 100;
 
 export function applyDecay(
   stats: PetStats,
@@ -34,10 +39,13 @@ export function applyDecay(
   }
 
   return {
-    food: clampStat(stats.food - deltaMinutes * rates.food),
-    walk: clampStat(stats.walk - deltaMinutes * rates.walk),
-    love: clampStat(stats.love - deltaMinutes * rates.love),
-    energy: clampStat(stats.energy - deltaMinutes * rates.energy),
-    hygiene: clampStat(stats.hygiene - deltaMinutes * rates.hygiene),
+    food: clampStat(stats.food - deltaMinutes * rates.food, stats.food),
+    walk: clampStat(stats.walk - deltaMinutes * rates.walk, stats.walk),
+    love: clampStat(stats.love - deltaMinutes * rates.love, stats.love),
+    energy: clampStat(stats.energy - deltaMinutes * rates.energy, stats.energy),
+    hygiene: clampStat(
+      stats.hygiene - deltaMinutes * rates.hygiene,
+      stats.hygiene,
+    ),
   };
 }

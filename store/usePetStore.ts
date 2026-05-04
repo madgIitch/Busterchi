@@ -80,7 +80,17 @@ const XP_REWARD: Record<ActionKey, number> = {
   bath: 10,
 };
 
-const clampStat = (value: number) => Math.max(0, Math.min(100, value));
+const clampStat = (value: number, fallback = 100) =>
+  Number.isFinite(value)
+    ? Math.max(0, Math.min(100, value))
+    : Number.isFinite(fallback)
+      ? Math.max(0, Math.min(100, fallback))
+      : 100;
+
+const normalizeStat = (value: unknown, fallback: number) =>
+  typeof value === "number" && Number.isFinite(value)
+    ? clampStat(value)
+    : clampStat(fallback);
 
 const getTodayKey = () => new Date().toISOString().slice(0, 10);
 const isDev = process.env.NODE_ENV === "development";
@@ -259,11 +269,11 @@ export const usePetStore = create<PetStore>((set) => ({
       const sleepUntil = isDev ? 0 : isSleeping ? baseSleepUntil : 0;
 
       const baseStats: PetStats = {
-        food: stored?.stats.food ?? state.food,
-        walk: stored?.stats.walk ?? state.walk,
-        love: stored?.stats.love ?? state.love,
-        energy: stored?.stats.energy ?? state.energy,
-        hygiene: stored?.stats.hygiene ?? 100,
+        food: normalizeStat(stored?.stats.food, state.food),
+        walk: normalizeStat(stored?.stats.walk, state.walk),
+        love: normalizeStat(stored?.stats.love, state.love),
+        energy: normalizeStat(stored?.stats.energy, state.energy),
+        hygiene: normalizeStat(stored?.stats.hygiene, 100),
       };
 
       const decayed = applyDecay(
@@ -335,11 +345,11 @@ if (typeof window !== "undefined") {
     const payload: PersistedPetState = {
       version: STORAGE_VERSION,
       stats: {
-        food: state.food,
-        walk: state.walk,
-        love: state.love,
-        energy: state.energy,
-        hygiene: state.hygiene,
+        food: normalizeStat(state.food, defaultStats.food),
+        walk: normalizeStat(state.walk, defaultStats.walk),
+        love: normalizeStat(state.love, defaultStats.love),
+        energy: normalizeStat(state.energy, defaultStats.energy),
+        hygiene: normalizeStat(state.hygiene, 100),
       },
       cooldowns: state.cooldowns,
       lastSpeechLine: state.lastSpeechLine,

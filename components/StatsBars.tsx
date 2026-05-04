@@ -15,19 +15,22 @@ type StatItem = {
 function StatRow({ stat }: { stat: StatItem }) {
   const prev = useRef(stat.value);
   const [sparkle, setSparkle] = useState(false);
+  const safeValue = Number.isFinite(stat.value)
+    ? Math.max(0, Math.min(100, stat.value))
+    : 100;
 
   useEffect(() => {
-    if (stat.value > prev.current) {
+    if (safeValue > prev.current) {
       const onId = window.setTimeout(() => setSparkle(true), 0);
       const offId = window.setTimeout(() => setSparkle(false), 600);
-      prev.current = stat.value;
+      prev.current = safeValue;
       return () => {
         clearTimeout(onId);
         clearTimeout(offId);
       };
     }
-    prev.current = stat.value;
-  }, [stat.value]);
+    prev.current = safeValue;
+  }, [safeValue]);
 
   return (
     <div className="flex items-center gap-3">
@@ -37,7 +40,7 @@ function StatRow({ stat }: { stat: StatItem }) {
       <div className="flex-1 space-y-1">
         <div className="flex items-center justify-between text-sm font-normal text-text">
           <span>{stat.label}</span>
-          <span className="text-muted">{Math.round(stat.value)}</span>
+          <span className="text-muted">{Math.round(safeValue)}</span>
         </div>
         <div className="relative h-6 w-full overflow-hidden rounded-full bg-background/80 shadow-inner">
           <div
@@ -46,7 +49,7 @@ function StatRow({ stat }: { stat: StatItem }) {
               backgroundImage: `url(${stat.barFullSrc})`,
               backgroundSize: "100% 100%",
               backgroundRepeat: "no-repeat",
-              clipPath: `inset(0 ${100 - Math.round(stat.value)}% 0 0)`,
+              clipPath: `inset(0 ${100 - Math.round(safeValue)}% 0 0)`,
             }}
           />
           <div

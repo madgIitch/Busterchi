@@ -6,6 +6,11 @@ import { SHOP_CATEGORIES, type ShopItem } from "@/lib/shopCatalog";
 import { useShopStore } from "@/store/useShopStore";
 import { usePetStore } from "@/store/usePetStore";
 
+const HIDDEN_SHOP_CATEGORY_IDS = new Set(["paredes"]);
+const visibleShopCategories = SHOP_CATEGORIES.filter(
+  (category) => !HIDDEN_SHOP_CATEGORY_IDS.has(category.id),
+);
+
 export default function ShopModal() {
   const {
     isOpen,
@@ -21,7 +26,20 @@ export default function ShopModal() {
   const [isLoading, setIsLoading] = useState(false);
 
   useEffect(() => {
+    if (!isOpen || !HIDDEN_SHOP_CATEGORY_IDS.has(selectedCategory)) {
+      return;
+    }
+    const fallbackCategory = visibleShopCategories[0];
+    if (fallbackCategory) {
+      selectCategory(fallbackCategory.id);
+    }
+  }, [isOpen, selectCategory, selectedCategory]);
+
+  useEffect(() => {
     if (!isOpen) {
+      return;
+    }
+    if (HIDDEN_SHOP_CATEGORY_IDS.has(selectedCategory)) {
       return;
     }
 
@@ -86,7 +104,7 @@ export default function ShopModal() {
 
         <div className="grid h-[calc(100svh-56px)] grid-cols-[160px_1fr]">
           <aside className="flex flex-col gap-2 overflow-y-auto border-r border-black/10 bg-background/40 p-3">
-            {SHOP_CATEGORIES.map((category) => {
+            {visibleShopCategories.map((category) => {
               const active = category.id === selectedCategory;
               return (
                 <button
