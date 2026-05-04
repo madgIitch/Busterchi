@@ -3,6 +3,7 @@
 import Image from "next/image";
 import { useEffect, useMemo, useState } from "react";
 import ActionButtons from "@/components/ActionButtons";
+import CatchGameModal from "@/components/CatchGameModal";
 import InventoryModal from "@/components/InventoryModal";
 import PatchNotesModal from "@/components/PatchNotesModal";
 import PetScene from "@/components/PetScene";
@@ -28,10 +29,17 @@ export default function Home() {
     isSleeping,
     sleepUntil,
     bucksters,
+    hygiene,
+    level,
+    isLevelingUp,
+    gainXP,
+    addBucksters,
+    clearLevelUp,
   } = usePetStore();
   const { openShop, openInventory, rehydrate: rehydrateShop } = useShopStore();
   const [now, setNow] = useState(0);
   const [isWalkGameOpen, setIsWalkGameOpen] = useState(false);
+  const [isCatchGameOpen, setIsCatchGameOpen] = useState(false);
   const [isPatchNotesOpen, setIsPatchNotesOpen] = useState(false);
 
   useEffect(() => {
@@ -73,6 +81,7 @@ export default function Home() {
       walk: 30 * 1000,
       pet: 1 * 60 * 1000,
       sleep: 10 * 60 * 1000,
+      bath: 5 * 60 * 1000,
     }),
     [],
   );
@@ -113,6 +122,14 @@ export default function Home() {
       iconSrc: "/uiElements/EnergyStatusIcon.png",
       barEmptySrc: "/uiElements/ProgressEmptyEnergy.png",
       barFullSrc: "/uiElements/ProgressFullEnergy.png",
+    },
+    {
+      label: "Hygiene",
+      value: hygiene,
+      iconSrc: "/uiElements/LoveStatusIcon.png",
+      barEmptySrc: "/uiElements/ProgressEmptyLove.png",
+      barFullSrc: "/uiElements/ProgressFullLove.png",
+      endIcon: "🫧",
     },
   ];
 
@@ -176,6 +193,16 @@ export default function Home() {
           : "",
       onClick: () => performAction("sleep"),
     },
+    {
+      label: "Bath",
+      emoji: "🫧",
+      disabled: isSleepingNow || getRemaining("bath") > 0,
+      cooldownLabel:
+        getRemaining("bath") > 0
+          ? `${Math.ceil(getRemaining("bath") / 1000)}s`
+          : "",
+      onClick: () => performAction("bath"),
+    },
   ];
 
   return (
@@ -183,7 +210,7 @@ export default function Home() {
       <main className="fit-screen mx-auto flex h-full w-full max-w-md flex-col justify-between gap-2 sm:gap-4">
         <header className="flex items-center justify-between">
           <div>
-            <h1 className="text-base font-normal sm:text-2xl">Bustergochi</h1>
+            <h1 className="text-base font-normal sm:text-2xl">Bustergotxi</h1>
           </div>
           <div className="flex items-center gap-2">
             <button
@@ -209,6 +236,17 @@ export default function Home() {
               />
               <span>{bucksters}</span>
             </div>
+            <div className="rounded-full bg-surface px-2 py-1 text-[10px] text-text shadow-sm shadow-black/10 sm:text-xs">
+              Niv. {level}
+            </div>
+            <button
+              type="button"
+              className="h-8 min-w-8 rounded-full bg-surface px-2 text-sm text-text shadow-sm shadow-black/10 sm:h-10"
+              aria-label="Jugar"
+              onClick={() => setIsCatchGameOpen(true)}
+            >
+              🎮
+            </button>
             <button
               type="button"
               className="h-8 w-8 rounded-full bg-surface text-text shadow-sm shadow-black/10 sm:h-10 sm:w-10"
@@ -256,6 +294,22 @@ export default function Home() {
           isOpen={isWalkGameOpen}
           onClose={() => setIsWalkGameOpen(false)}
         />
+        <CatchGameModal
+          isOpen={isCatchGameOpen}
+          onClose={() => setIsCatchGameOpen(false)}
+          onReward={(bucksterReward, xpReward) => {
+            addBucksters(bucksterReward);
+            gainXP(xpReward);
+          }}
+        />
+        {isLevelingUp ? (
+          <div
+            className="level-up-overlay fixed inset-0 z-40 pointer-events-none"
+            onAnimationEnd={clearLevelUp}
+          >
+            <span className="level-up-text">Subi de nivel!</span>
+          </div>
+        ) : null}
       </main>
     </div>
   );

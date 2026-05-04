@@ -5,13 +5,18 @@ type ActionItem = {
   disabled?: boolean;
   cooldownLabel?: string;
   onClick?: () => void;
-  imageSrc: string;
+  imageSrc?: string;
+  emoji?: string;
   imageClassName?: string;
 };
 
 export default function ActionButtons({ actions }: { actions: ActionItem[] }) {
+  const isFiveColumn = actions.length >= 5;
+
   return (
-    <section className="grid w-full grid-cols-4 gap-3">
+    <section
+      className={`grid w-full ${isFiveColumn ? "grid-cols-5 gap-1" : "grid-cols-4 gap-3"}`}
+    >
       {actions.map((action) => (
         <div key={action.label} className="flex flex-col items-center gap-1">
           <button
@@ -20,13 +25,19 @@ export default function ActionButtons({ actions }: { actions: ActionItem[] }) {
             onClick={action.onClick}
             className="flex h-20 w-full items-end justify-center rounded-3xl shadow-lg shadow-black/15 transition active:scale-95 disabled:cursor-not-allowed disabled:opacity-50"
           >
-            <Image
-              src={action.imageSrc}
-              alt={`${action.label} button`}
-              width={180}
-              height={180}
-              className={`h-18 w-auto object-contain object-bottom ${action.imageClassName ?? ""}`}
-            />
+            {action.imageSrc ? (
+              <Image
+                src={action.imageSrc}
+                alt={`${action.label} button`}
+                width={180}
+                height={180}
+                className={`h-18 w-auto object-contain object-bottom ${action.imageClassName ?? ""}`}
+              />
+            ) : (
+              <span className="pb-5 text-3xl" aria-hidden="true">
+                {action.emoji}
+              </span>
+            )}
             <span className="sr-only">{action.label}</span>
           </button>
           {action.cooldownLabel ? (

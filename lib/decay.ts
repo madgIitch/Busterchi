@@ -3,6 +3,7 @@ export type PetStats = {
   walk: number;
   love: number;
   energy: number;
+  hygiene: number;
 };
 
 export type DecayRates = {
@@ -10,6 +11,7 @@ export type DecayRates = {
   walk: number;
   love: number;
   energy: number;
+  hygiene: number;
 };
 
 export const DEFAULT_DECAY_RATES: DecayRates = {
@@ -17,6 +19,7 @@ export const DEFAULT_DECAY_RATES: DecayRates = {
   walk: 0.08,
   love: 0.095,
   energy: 0.065,
+  hygiene: 0.15,
 };
 
 const clampStat = (value: number) => Math.max(0, Math.min(100, value));
@@ -35,5 +38,6 @@ export function applyDecay(
     walk: clampStat(stats.walk - deltaMinutes * rates.walk),
     love: clampStat(stats.love - deltaMinutes * rates.love),
     energy: clampStat(stats.energy - deltaMinutes * rates.energy),
+    hygiene: clampStat(stats.hygiene - deltaMinutes * rates.hygiene),
   };
 }

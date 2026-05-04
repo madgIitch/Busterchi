@@ -1,43 +1,45 @@
+import type { PetStats } from "@/lib/decay";
+
 export const SPEECH_LINES = {
   default: [
-    "¡Modo loco activado!",
+    "Modo loco activado!",
     "Colita en modo fiesta.",
     "El mejor perrito reportandose.",
     "Eres mi humano favorito.",
     "Siesta ahora, juego despues.",
-    "¡Boop al hocico!",
-    "¿Has visto que elegante soy?",
+    "Boop al hocico!",
+    "Has visto que elegante soy?",
     "Estoy feliz solo de verte.",
     "Dia perfecto para ser perrito.",
     "Nivel de ternura: maximo.",
     "Sonrisa perruna activada.",
     "Aqui, vigilando la casa.",
-    "¿Jugamos un ratito?",
+    "Jugamos un ratito?",
     "Te estaba esperando.",
   ],
   needs: {
     food: [
       "Tengo hambrecita...",
-      "¿Me das un snack?",
+      "Me das un snack?",
       "Mi barriguita hace ruiditos.",
       "Hora oficial de comer, creo.",
       "Prometo portarme bien si hay comida.",
-      "Ese olor... ¿es para mi?",
+      "Ese olor... es para mi?",
       "Un bocadito y soy feliz.",
       "Mi plato me llama.",
     ],
     walk: [
-      "¿Paseito, porfa?",
+      "Paseito, porfa?",
       "Necesito estirar las patas.",
       "El mundo exterior me espera.",
-      "¿Salimos a oler cosas?",
+      "Salimos a oler cosas?",
       "Tengo ganas de correr un poquito.",
       "La calle me esta llamando.",
       "Prometo no tirar de la correa (mucho).",
       "Aventura desbloqueable: paseo.",
     ],
     love: [
-      "¿Me das mimitos?",
+      "Me das mimitos?",
       "Necesito carinito.",
       "Un abrazo y ya estoy bien.",
       "Rascame detras de la oreja.",
@@ -56,30 +58,40 @@ export const SPEECH_LINES = {
       "Cargando pilas perrunas...",
       "Una camita mullida seria ideal ahora.",
     ],
+    hygiene: [
+      "Necesito un banito kawaii.",
+      "Mi pelito pide burbujas.",
+      "Creo que huelo a aventura.",
+      "Un poco de jabon y vuelvo a brillar.",
+      "Banera, espuma y mimos, porfa.",
+      "Mis patitas quieren agua tibia.",
+      "Estoy listo para quedar reluciente.",
+      "Modo ducha pendiente.",
+    ],
   },
   actions: {
     snack: [
-      "¡Yummy!",
+      "Yummy!",
       "Snack recibido. Gracias.",
       "Esto mejora mi dia.",
       "Confirmo: estaba delicioso.",
       "Mi humano sabe lo que hace.",
       "Felicidad en forma de comida.",
-      "¿Otro mas o ya?",
+      "Otro mas o ya?",
       "Te quiero un poquito mas ahora.",
     ],
     walk: [
-      "¡A caminar!",
+      "A caminar!",
       "Paseito desbloqueado.",
       "Libertad perruna.",
-      "¡Vamos, vamos!",
+      "Vamos, vamos!",
       "Este paseo promete.",
       "Olfateo en progreso.",
       "Patas felices en movimiento.",
       "Aventura completada con exito.",
     ],
     pet: [
-      "¡Mimitos!",
+      "Mimitos!",
       "Me encanta que me acaricies.",
       "Esto es exactamente lo que necesitaba.",
       "No pares nunca, por favor.",
@@ -94,27 +106,40 @@ export const SPEECH_LINES = {
       "Un suenito y vuelvo.",
       "Modo siesta activado.",
       "Cargando pilas perrunas.",
-      "¿Me despiertas en un ratito?",
+      "Me despiertas en un ratito?",
+    ],
+    bath: [
+      "Burbujitas activadas.",
+      "Ahora si huelo genial.",
+      "Pelito limpio, corazon feliz.",
+      "Gracias por el banito.",
+      "Brillo perruno restaurado.",
+      "Estoy suavecito otra vez.",
     ],
   },
+  tap: [
+    "Boop recibido.",
+    "Eso me dio cosquillitas.",
+    "Otra caricia para mi coleccion.",
+    "Mi corazon hace wuff.",
+    "Te senti cerquita.",
+  ],
+  levelUp: [
+    "Subi de nivel, humano.",
+    "Mas ternura desbloqueada.",
+    "Buster evolucion emocional completa.",
+  ],
   sleepDreams: [
-    "Sueño con huesitos gigantes.",
+    "Sueno con huesitos gigantes.",
     "Estoy corriendo en una pradera.",
     "Zzz... mariposas por todas partes.",
-    "Sueño contigo y mi camita.",
-    "Un paseo infinito en mis sueños.",
+    "Sueno contigo y mi camita.",
+    "Un paseo infinito en mis suenos.",
     "Zzz... lluvia suave y mantita.",
   ],
 };
 
-export type ActionKey = "snack" | "walk" | "pet" | "sleep";
-
-export type PetStats = {
-  food: number;
-  walk: number;
-  love: number;
-  energy: number;
-};
+export type ActionKey = "snack" | "walk" | "pet" | "sleep" | "bath";
 
 const pickLine = (lines: string[]) =>
   lines[Math.floor(Math.random() * lines.length)];
@@ -137,9 +162,20 @@ export function getSpeechForNeeds(stats: PetStats) {
   if (stats.energy < 25) {
     return pickLine(SPEECH_LINES.needs.energy);
   }
+  if (stats.hygiene < 25) {
+    return pickLine(SPEECH_LINES.needs.hygiene);
+  }
   return pickLine(SPEECH_LINES.default);
 }
 
 export function getSpeechForSleep() {
   return pickLine(SPEECH_LINES.sleepDreams);
+}
+
+export function getSpeechForTap() {
+  return pickLine(SPEECH_LINES.tap);
+}
+
+export function getSpeechForLevelUp() {
+  return pickLine(SPEECH_LINES.levelUp);
 }

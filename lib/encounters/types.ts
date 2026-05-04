@@ -46,10 +46,24 @@ export type EnemyCardDefinition = {
   tag?: "identity" | "basic" | "reactive" | "strong";
 };
 
+export type EnemyDialogue = {
+  presentation: string[];
+  defeat: string[];
+  victory: string[];
+};
+
+export type EnemyVariant = {
+  id: string;
+  name: string;
+  imageSrc: string;
+  dialogue: EnemyDialogue;
+};
+
 export type EnemyDeck = {
   id: string;
   name: string;
   elements: ElementId[];
   pattern: "rotation" | "weighted" | "reactive";
   cards: EnemyCardDefinition[];
+  variants: EnemyVariant[];
 };

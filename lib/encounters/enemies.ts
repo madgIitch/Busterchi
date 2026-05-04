@@ -6,6 +6,28 @@ export const ENEMY_DECKS: EnemyDeck[] = [
     name: "Fuerzas de orden",
     elements: ["calma", "territorio"],
     pattern: "reactive",
+    variants: [
+      {
+        id: "ertzaintza",
+        name: "Ertzaintza",
+        imageSrc: "/enemies/Ertzaintza.png",
+        dialogue: {
+          presentation: ["Identifíkate.", "Agente Txoko. No te muevas.", "Documentación, mesedez."],
+          defeat: ["Esto no ha terminado.", "Tendré que llamar refuerzos.", "Informe presentado."],
+          victory: ["Despejado. Circulando.", "Sin incidentes. Por ahora.", "Aquí mando yo."],
+        },
+      },
+      {
+        id: "guardia_civil",
+        name: "Guardia Civil",
+        imageSrc: "/enemies/Guardia civil.png",
+        dialogue: {
+          presentation: ["¡Alto ahí!", "Documentación, por favor.", "¿A dónde va usted con ese perro?"],
+          defeat: ["Se acabó por hoy.", "Retiro estratégico.", "Esto queda anotado."],
+          victory: ["Todo bajo control.", "El orden es el orden.", "Despejado el área."],
+        },
+      },
+    ],
     cards: [
       {
         id: "orden_mirada_fija",
@@ -76,6 +98,28 @@ export const ENEMY_DECKS: EnemyDeck[] = [
     name: "Grupo de Txikiteros",
     elements: ["caos"],
     pattern: "weighted",
+    variants: [
+      {
+        id: "txikiteros",
+        name: "Txikiteros",
+        imageSrc: "/enemies/Txikiteros.png",
+        dialogue: {
+          presentation: ["¡Eeeh, el perrete!", "¿Te pongo un txikito?", "¡Aupa majo, únete!"],
+          defeat: ["Bueno, otro día será.", "¡Hasta la próxima ronda!", "Que conste que lo intentamos."],
+          victory: ["¡Revolución festiva completada!", "¡Caos total, como siempre!", "Jajaja, ¡otro más!"],
+        },
+      },
+      {
+        id: "antxon",
+        name: "Antxon",
+        imageSrc: "/enemies/Antxon.png",
+        dialogue: {
+          presentation: ["¡Que soy vasco! A parte de ser andaluz, sería sevillano, no de Córdoba. Soy sevillano, del barrio de la Cruz.", "Soy Iñaki... Iñaki el Metralletas", "Por vía paterna: Gabilondo, Urdangarin, Zubizarreta y Arguiñano. Por vía materna: Igartiburu, Erentxun, Otegi y Clemente"],
+          defeat: ["Que Clemente no es vasco? Vaya decepción se vana llevar en mi familia", "Los de la cúpula que me tenían silenciado", "Tengo que recargar el txikito."],
+          victory: ["Gora Euskadi manque pierda!", "Euskadi tiene un color especiaaaaal!", "Somos mejores, que los españoles"],
+        },
+      },
+    ],
     cards: [
       {
         id: "txiki_risa",
@@ -177,6 +221,38 @@ export const ENEMY_DECKS: EnemyDeck[] = [
     name: "Ideologizado",
     elements: ["caos", "territorio"],
     pattern: "reactive",
+    variants: [
+      {
+        id: "abascal",
+        name: "Abascal",
+        imageSrc: "/enemies/Abascal.png",
+        dialogue: {
+          presentation: ["España, una, grande y libre.", "¿Llevas chip?", "El problema de este país eres tú."],
+          defeat: ["Esto no ha terminado.", "El pueblo español recordará.", "Volveré con más apoyo."],
+          victory: ["¡España vence siempre!", "Orden restablecido.", "Así se hace patria."],
+        },
+      },
+      {
+        id: "votante_pnv",
+        name: "Votante PNV",
+        imageSrc: "/enemies/Votante PNV.png",
+        dialogue: {
+          presentation: ["Con moderación, como siempre.", "Euskadi da bide.", "Pragmatismo vasco ante todo."],
+          defeat: ["Hoy perdemos, mañana condicionamos", "No pasa nada, aún queda margen presupuestario.", "El Egunkaria lo recoge."],
+          victory: ["Con diálogo y firmeza.", "Aquí el que negocia soy yo.", "Consenso alcanzado."],
+        },
+      },
+      {
+        id: "ortega_lara",
+        name: "Ortega Lara",
+        imageSrc: "/enemies/Ortega Lara.png",
+        dialogue: {
+          presentation: ["Este país me debe algo.", "La historia me ha dado la razón.", "He visto la oscuridad y sigo aquí."],
+          defeat: ["Ya lo viví peor.", "Esto no me afecta.", "Sigo en pie."],
+          victory: ["Sobrevivir ya fue mi primera victoria", "Nadie me doblega.", "Así es como se sobrevive."],
+        },
+      },
+    ],
     cards: [
       {
         id: "ideo_argumento",
@@ -273,6 +349,78 @@ export const ENEMY_DECKS: EnemyDeck[] = [
     name: "Personaje mediatico",
     elements: ["vinculo", "caos"],
     pattern: "weighted",
+    variants: [
+      {
+        id: "arguinano",
+        name: "Karlos Arguiñano",
+        imageSrc: "/enemies/Karlos Arguiñano.png",
+        dialogue: {
+          presentation: ["¡Qué rico, rico, rico!", "Hoy os traigo un guiso especial.", "¡Con mucho amor y alegría!"],
+          defeat: ["Buf, se me ha quemado el sofrito.", "¡Qué desastre de receta!", "En el mundo mandan los malos, en todos los sitios..."],
+          victory: ["¡Plato completado!", "Así se cocina la victoria.", "Esto está para chuparse los dedos"],
+        },
+      },
+      {
+        id: "amaia",
+        name: "Amaia OT",
+        imageSrc: "/enemies/Amaia OT.png",
+        dialogue: {
+          presentation: ["Hola, soy Amaia… creo.", "Voy a hacerlo a mi manera.", "Esto va a ser raro, pero bonito."],
+          defeat: ["No era mi canción favorita.", "¡Qué rollo es esto de ser artista!", "¡Qué horror! ¡Qué horror!"],
+          victory: ["¡Directo a la final!", "¡Ay, qué bien! ¡Qué guay!", "Es que soy un poco así... un poco 'pava', ¿no?"],
+        },
+      },
+      {
+        id: "ibai",
+        name: "Ibai LLanos",
+        imageSrc: "/enemies/Ibai LLanos.png",
+        dialogue: {
+          presentation: ["Toxicidad fuera, mala vibra fuera.", "¡Qué locura, tío!", "Me da igual lo que digan, yo voy a seguir comiendo lo que me dé la gana... bueno, mañana empiezo la dieta."],
+          defeat: ["¿Pero qué es esto? ¡Pero qué es esto!", "Disfrutad del camino, no solo de la meta.", "A veces se gana y a veces se aprende, pero lo importante es no rendirse."],
+          victory: ["Soy Ibai, soy un masón, la Kings League la paga Vox!", "¡Gigante, noble, caótico!", "Yo soy un tío de barrio que ha tenido mucha suerte."],
+        },
+      },
+      {
+        id: "iker",
+        name: "Iker Jimenez",
+        imageSrc: "/enemies/Iker Jimenez.png",
+        dialogue: {
+          presentation: ["Hay cosas que la ciencia no explica.", "Bienvenidos a la nave del misterio.", "Esta noche cruzamos la frontera de lo imposible."],
+          defeat: ["El fenómeno ha sido contenido.", "Seguiremos investigando.", "Lo documentamos y punto."],
+          victory: ["Cuarto milenio: caso resuelto.", "La anomalía persiste.", "Esto lo sabía yo desde 2003."],
+        },
+      },
+      {
+        id: "nico",
+        name: "Nico Williams",
+        imageSrc: "/enemies/Nico Williams.png",
+        dialogue: {
+          presentation: ["¡Vamos!", "¡Aupa Athletic!", "El balón es mío."],
+          defeat: ["Fuera de juego. Mala suerte.", "El árbitro lo ha visto diferente.", "Revancha en San Mamés."],
+          victory: ["¡Gooool!", "¡Uno más para el Athletic!", "Te he roto por la izquierda."],
+        },
+      },
+      {
+        id: "fito",
+        name: "Fito",
+        imageSrc: "/enemies/Fito.png",
+        dialogue: {
+          presentation: ["Camino despacito, que las prisas no son buenas", "El rock nunca muere.", "Por la boca vive el pez"],
+          defeat: ["Soldadito marinero conociste a una sirena", "Este mar, cada vez guarda más barcos hundidos", "No sé vivir solo con 5 sentidos"],
+          victory: ["Todo lo que sé, me lo enseñó una bruja", "Esta noche el escenario es mío.", "*Solo super épico de Saxo*"],
+        },
+      },
+      {
+        id: "ben_yart",
+        name: "Ben Yart",
+        imageSrc: "/enemies/Ben Yart.png",
+        dialogue: {
+          presentation: ["Videosaludos a 50€", "No soy Ben Yart soy Rosalía", "Yo no soy un delincuente, yo soy un usuario de la vida"],
+          defeat: ["Esto no me da views.", "Acepta que nunca serás Chill Mafia ni Ben Yart", "No tener hijos porque hay menos dinero es una pijada, hay que traer prole y asegurarse de que sean fuertes"],
+          victory: ["El litro es mío", "Tira pal chino", "Cuando sea dictador estará prohibido ser crítico musical y amigo de todos los músicos a la vez"],
+        },
+      },
+    ],
     cards: [
       {
         id: "med_exposicion",
@@ -367,6 +515,18 @@ export const ENEMY_DECKS: EnemyDeck[] = [
     name: "T-Pose",
     elements: ["territorio"],
     pattern: "rotation",
+    variants: [
+      {
+        id: "tpose_guardia",
+        name: "Guardia Civil T-Pose",
+        imageSrc: "/enemies/Guardia Civil Pose T.png",
+        dialogue: {
+          presentation: ["Vengo de un zulo muy pequeño", "Alguien sabe donde está Ortega Lara??", "Yo que quería irme a Burgos"],
+          defeat: ["Bueno realmente el zulo no era tan malo, tenía ajedrez", "A ver realmente en Madrid hay pisos peores", "Desde que me dejó mi mujer parece que vivo yo tambien en un zulo"],
+          victory: ["Sé que sabes el paradero de Ortega", "Sin novedad en el puesto", "T-P-O-S-E."],
+        },
+      },
+    ],
     cards: [
       {
         id: "tpose_nada_1",
@@ -442,6 +602,28 @@ export const ENEMY_DECKS: EnemyDeck[] = [
     name: "La Idea Fundacional",
     elements: ["territorio", "calma"],
     pattern: "rotation",
+    variants: [
+      {
+        id: "sabino",
+        name: "Sabino Arana",
+        imageSrc: "/enemies/Sabino Arana.png",
+        dialogue: {
+          presentation: ["La raza, la lengua, la fe.", "Euskadi es eterna.", "Nada ha cambiado en el fondo."],
+          defeat: ["Las ideas no mueren.", "Volveré en otra forma.", "El tiempo está de mi lado."],
+          victory: ["La Idea Fundacional persiste.", "No se puede escapar del origen.", "Esto ya estaba escrito."],
+        },
+      },
+      {
+        id: "nacional",
+        name: "Lo Nacional",
+        imageSrc: "/enemies/Nacional.png",
+        dialogue: {
+          presentation: ["La nación está en peligro.", "´Has visto la infiltrada???", "Esto ya lo vivimos antes."],
+          defeat: ["Un tropiezo, no una derrota.", "La nación sigue en pie.", "En Ávila no me prepararon para esto."],
+          victory: ["¡Por la patria!", "El orden nacional restaurado.", "Así se defiende lo nuestro."],
+        },
+      },
+    ],
     cards: [
       {
         id: "idea_herencia",

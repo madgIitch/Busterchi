@@ -41,3 +41,15 @@ export async function idbSet<T>(key: string, value: T): Promise<void> {
     req.onerror = () => reject(req.error);
   });
 }
+
+export async function idbRemove(key: string): Promise<void> {
+  const db = await openDb();
+  return new Promise((resolve, reject) => {
+    const tx = db.transaction(STORE_NAME, "readwrite");
+    const store = tx.objectStore(STORE_NAME);
+    const req = store.delete(key);
+
+    req.onsuccess = () => resolve();
+    req.onerror = () => reject(req.error);
+  });
+}

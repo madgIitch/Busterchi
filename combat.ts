@@ -27,9 +27,12 @@ export type EnemyState = {
   cooldowns: Record<string, number>;
 };
 
+export type CombatOutcome = "ongoing" | "win" | "lose";
+
 export type CombatState = {
   turn: number;
   phase: "A" | "B";
+  outcome: CombatOutcome;
   player: PlayerState;
   enemy: EnemyState;
   deck: CardDefinition[];
@@ -99,6 +102,7 @@ export function createCombatState(
   const state: CombatState = {
     turn: 1,
     phase: "A",
+    outcome: "ongoing",
     player: {
       mood: 100,
       stress: 0,
@@ -144,7 +148,22 @@ export function drawCards(state: CombatState, count: number) {
   }
 }
 
+function checkOutcome(state: CombatState) {
+  if (state.outcome !== "ongoing") return;
+  if (state.player.stress >= 100) {
+    state.player.mood = clamp(state.player.mood - 25, 0, 100);
+    state.player.stress = Math.max(0, state.player.stress - 100);
+    state.log.push(`⚠️ Estrés al límite: -25 ánimo`);
+  }
+  if (state.enemy.hp <= 0) {
+    state.outcome = "win";
+  } else if (state.player.mood <= 0) {
+    state.outcome = "lose";
+  }
+}
+
 export function playCard(state: CombatState, cardId: string) {
+  if (state.outcome !== "ongoing") return;
   const index = state.hand.findIndex((card) => card.id === cardId);
   if (index === -1) {
     return;
@@ -167,9 +186,11 @@ export function playCard(state: CombatState, cardId: string) {
     state.discard.push(card);
   }
   state.log.push(`Player: ${card.name}`);
+  checkOutcome(state);
 }
 
 export function endTurn(state: CombatState) {
+  if (state.outcome !== "ongoing") return;
   if (state.phase === "A") {
     runEnemyStep(state, 2);
     state.phase = "B";
@@ -351,6 +372,7 @@ function runEnemyAction(state: CombatState) {
 
   applyEffects(state, enemyCard.effects);
   state.log.push(`Enemy: ${enemyCard.name}`);
+  checkOutcome(state);
   if (enemyCard.cooldown && enemyCard.cooldown > 0) {
     state.enemy.cooldowns[enemyCard.id] = enemyCard.cooldown;
   }

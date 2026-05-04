@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { useEffect, useRef, useState } from "react";
+import FloatingParticles from "@/components/FloatingParticles";
 import {
   DECORATION_OVERRIDES,
   DECORATION_SLOTS,
@@ -13,6 +14,7 @@ import {
   VINYL_SHELF_SLOTS,
 } from "@/lib/decorations/layout";
 import { useShopStore } from "@/store/useShopStore";
+import { usePetStore } from "@/store/usePetStore";
 
 function getBackgroundByTime(): string {
   const hour = new Date().getHours();
@@ -37,9 +39,13 @@ export default function PetScene({ isSleeping }: { isSleeping: boolean }) {
   const petImage = isSleeping ? "/pet/buster_sleep.png" : "/pet/buster_idle.png";
   const altText = isSleeping ? "Buster sleeping" : "Buster idle";
   const decorations = useShopStore((state) => state.decorations);
+  const tapPet = usePetStore((state) => state.tapPet);
   const sceneRef = useRef<HTMLDivElement | null>(null);
   const [sceneScale, setSceneScale] = useState(1);
   const [backgroundImage, setBackgroundImage] = useState(getBackgroundByTime());
+  const [particles, setParticles] = useState<{ x: number; y: number } | null>(
+    null,
+  );
   const hasWindowEquipped = decorations.some((itemId) =>
     itemId.startsWith("ventanas/"),
   );
@@ -302,18 +308,44 @@ export default function PetScene({ isSleeping }: { isSleeping: boolean }) {
             );
           })()
         ))}
-        <Image
-          src={petImage}
-          alt={altText}
-          width={110}
-          height={90}
-          priority
-          className={`absolute z-25 h-auto -translate-x-1/2 -translate-y-1/2 idle-float ${
+        <button
+          type="button"
+          disabled={isSleeping}
+          onClick={(event) => {
+            const rect = sceneRef.current?.getBoundingClientRect();
+            if (!rect) {
+              return;
+            }
+            setParticles({
+              x: event.clientX - rect.left,
+              y: event.clientY - rect.top,
+            });
+            tapPet();
+          }}
+          className={`absolute z-25 -translate-x-1/2 -translate-y-1/2 ${
             activeScene === "habitacion"
               ? "left-[68%] top-[80%] w-[clamp(68px,22vw,92px)]"
               : "left-[60%] top-[80%] w-[clamp(68px,22vw,92px)]"
-          }`}
-        />
+          } ${isSleeping ? "pointer-events-none" : ""}`}
+          aria-label="Tocar a Buster"
+        >
+          <Image
+            src={petImage}
+            alt={altText}
+            width={110}
+            height={90}
+            priority
+            className="h-auto w-full idle-float"
+          />
+        </button>
+        {particles ? (
+          <FloatingParticles
+            emojis={["❤️", "✨", "🐾"]}
+            originX={particles.x}
+            originY={particles.y}
+            onDone={() => setParticles(null)}
+          />
+        ) : null}
         </div>
       </section>
       <div className="mt-3 flex items-center justify-center gap-4">
